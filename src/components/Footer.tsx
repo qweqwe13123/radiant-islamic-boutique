@@ -1,8 +1,19 @@
-import { Instagram } from "lucide-react";
+import { Instagram, ArrowUp } from "lucide-react";
 
 const Footer = () => {
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className="bg-primary text-primary-foreground relative">
+      {/* Back to top */}
+      <button
+        onClick={scrollToTop}
+        className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gold text-gold-foreground flex items-center justify-center hover:bg-gold/80 transition-colors duration-300"
+        aria-label="Back to top"
+      >
+        <ArrowUp size={16} />
+      </button>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
@@ -12,10 +23,10 @@ const Footer = () => {
               Элегантная исламская мода и персональный стиль для современных мусульманок.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-primary-foreground/70 hover:text-gold transition-colors" aria-label="Instagram">
+              <a href="#" className="text-primary-foreground/70 hover:text-gold transition-colors duration-300" aria-label="Instagram">
                 <Instagram size={18} />
               </a>
-              <a href="#" className="text-primary-foreground/70 hover:text-gold transition-colors" aria-label="Telegram">
+              <a href="#" className="text-primary-foreground/70 hover:text-gold transition-colors duration-300" aria-label="Telegram">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161l-1.97 9.281c-.146.658-.537.818-1.084.508l-3-2.211-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.942z"/>
                 </svg>
@@ -24,44 +35,24 @@ const Footer = () => {
           </div>
 
           {/* Links */}
-          <div className="space-y-4">
-            <h4 className="font-body text-xs font-semibold tracking-[0.2em] uppercase">Магазин</h4>
-            <ul className="space-y-2">
-              {["Хиджабы", "Абайи", "Аксессуары", "Новинки"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-body text-xs font-semibold tracking-[0.2em] uppercase">Услуги</h4>
-            <ul className="space-y-2">
-              {["Стайл-гайд", "Онлайн-курс", "Разбор гардероба", "Подбор хиджаба"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-body text-xs font-semibold tracking-[0.2em] uppercase">Поддержка</h4>
-            <ul className="space-y-2">
-              {["Доставка", "Возврат", "Контакты", "FAQ"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {[
+            { title: "Магазин", items: ["Хиджабы", "Абайи", "Аксессуары", "Новинки"] },
+            { title: "Услуги", items: ["Стайл-гайд", "Онлайн-курс", "Разбор гардероба", "Подбор хиджаба"] },
+            { title: "Поддержка", items: ["Доставка", "Возврат", "Контакты", "FAQ"] },
+          ].map((col) => (
+            <div key={col.title} className="space-y-4">
+              <h4 className="font-body text-xs font-semibold tracking-[0.2em] uppercase">{col.title}</h4>
+              <ul className="space-y-2">
+                {col.items.map((item) => (
+                  <li key={item}>
+                    <a href="#" className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-colors duration-300 line-draw inline-block">
+                      {item}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         {/* Bottom */}
@@ -75,7 +66,7 @@ const Footer = () => {
                 <a
                   key={item}
                   href="#"
-                  className="font-body text-xs text-primary-foreground/50 hover:text-gold transition-colors"
+                  className="font-body text-xs text-primary-foreground/50 hover:text-gold transition-colors duration-300"
                 >
                   {item}
                 </a>
@@ -87,7 +78,7 @@ const Footer = () => {
 
       {/* Big brand name */}
       <div className="overflow-hidden pb-4">
-        <h2 className="font-display text-[15vw] font-black leading-none text-primary-foreground/5 text-center tracking-[0.1em] select-none">
+        <h2 className="font-display text-[15vw] font-black leading-none text-primary-foreground/[0.03] text-center tracking-[0.1em] select-none">
           NŪRA
         </h2>
       </div>
