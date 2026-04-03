@@ -1,69 +1,109 @@
 import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
-import { useEffect, useRef, useState } from "react";
+import { useMouseParallax } from "@/hooks/useMouseParallax";
+import { useCountUp } from "@/hooks/useCountUp";
 
 const AboutSection = () => {
-  const header = useAnimatedReveal({ type: "fade-up", delay: 0, duration: 1000 });
-  const img = useAnimatedReveal({ type: "fade-up", delay: 200, duration: 1200 });
-  const text = useAnimatedReveal({ type: "fade-up", delay: 400, duration: 1000 });
-  const values = useAnimatedReveal({ type: "fade-up", delay: 600, duration: 1000 });
+  const p = useMouseParallax(0.3);
+  const header = useAnimatedReveal({ type: "flip-up", delay: 100, duration: 1000 });
+  const text = useAnimatedReveal({ type: "blur-in", delay: 300, duration: 900 });
+  const stats = useAnimatedReveal({ type: "fade-up", delay: 500, duration: 800 });
 
-  const [parallax, setParallax] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      setParallax((-rect.top / window.innerHeight) * 60);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const pillars = [
-    { num: "01", title: "Скромность", desc: "Элегантность в каждой детали без компромиссов" },
-    { num: "02", title: "Качество", desc: "Только натуральные ткани премиального класса" },
-    { num: "03", title: "Стиль", desc: "Современный дизайн с уважением к традициям" },
-  ];
+  const clients = useCountUp(500, 2000);
+  const looks = useCountUp(50, 1500);
+  const rating = useCountUp(49, 1800);
 
   return (
-    <section ref={sectionRef} id="about" className="py-24 md:py-36 relative overflow-hidden">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
-          <div ref={img.ref} style={img.style} className="relative">
-            <div className="aspect-[3/4] overflow-hidden relative">
-              <img src="https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80" alt="NŪRA Philosophy" className="w-full h-full object-cover" style={{ transform: `translateY(${parallax}px)` }} />
-            </div>
-            <div className="absolute -bottom-6 -right-6 md:-right-12 bg-brand px-6 py-4">
-              <span className="font-display text-3xl font-light text-brand-foreground">2026</span>
-              <span className="block font-body text-[9px] tracking-[0.3em] uppercase text-brand-foreground/70">Коллекция</span>
-            </div>
+    <section id="about" className="py-24 md:py-36 bg-primary text-primary-foreground relative overflow-hidden">
+      {/* Animated gradient orbs */}
+      <div
+        className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--gold) / 0.08) 0%, transparent 70%)",
+          transform: `translate(${p.x}px, ${p.y}px)`,
+          transition: "transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)",
+          filter: "blur(60px)",
+          animation: "morph 12s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--gold) / 0.06) 0%, transparent 70%)",
+          transform: `translate(${-p.x * 0.8}px, ${-p.y * 0.8}px)`,
+          transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+          filter: "blur(50px)",
+          animation: "morph 18s ease-in-out infinite reverse",
+        }}
+      />
+
+      {/* Floating geometric shapes */}
+      <div
+        className="absolute top-20 left-20 w-16 h-16 border border-gold/10 pointer-events-none"
+        style={{
+          transform: `rotate(45deg) translate(${-p.x * 0.4}px, ${-p.y * 0.4}px)`,
+          transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+          animation: "float 7s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute bottom-32 right-16 w-10 h-10 rounded-full border border-gold/10 pointer-events-none"
+        style={{
+          transform: `translate(${p.x * 0.6}px, ${p.y * 0.6}px)`,
+          transition: "transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)",
+          animation: "float 5s ease-in-out infinite reverse",
+        }}
+      />
+      <div
+        className="absolute top-1/2 right-1/4 w-3 h-3 rounded-full bg-gold/20 pointer-events-none"
+        style={{
+          transform: `translate(${p.x * 1.2}px, ${p.y * 1.2}px)`,
+          transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+          animation: "float 4s ease-in-out infinite",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-3xl mx-auto text-center space-y-8">
+          <div ref={header.ref} style={header.style}>
+            <p className="text-xs font-body font-medium tracking-[0.3em] uppercase text-gold mb-4">
+              О нас
+            </p>
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+              Мы верим, что скромность —{" "}
+              <span className="italic gradient-text">это сила</span>
+            </h2>
           </div>
-          <div>
-            <div ref={header.ref} style={header.style} className="mb-10">
-              <span className="font-body text-[10px] tracking-[0.5em] uppercase text-brand mb-4 block">О бренде</span>
-              <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-[1.1]">
-                Философия<br /><span className="italic">NŪRA</span>
-              </h2>
-            </div>
-            <div ref={text.ref} style={text.style} className="space-y-6 mb-12">
-              <p className="font-body text-sm md:text-base text-muted-foreground leading-[1.8]">
-                NŪRA — это пространство, где скромность встречается с высокой модой. Мы создаём одежду для современных мусульманок, которые не готовы выбирать между стилем и ценностями.
-              </p>
-              <p className="font-body text-sm md:text-base text-muted-foreground leading-[1.8]">
-                Каждое изделие — результат кропотливой работы наших дизайнеров, вдохновлённых архитектурой исламского искусства и современными тенденциями мировой моды.
-              </p>
-            </div>
-            <div ref={values.ref} style={values.style} className="space-y-6">
-              {pillars.map((p) => (
-                <div key={p.num} className="flex gap-6 group">
-                  <span className="font-body text-[11px] text-brand tracking-wider mt-1">{p.num}</span>
-                  <div>
-                    <h4 className="font-display text-xl font-light text-foreground mb-1">{p.title}</h4>
-                    <p className="font-body text-sm text-muted-foreground">{p.desc}</p>
-                  </div>
-                </div>
-              ))}
+
+          <div ref={text.ref} style={text.style}>
+            <p className="font-body text-primary-foreground/70 text-base md:text-lg leading-relaxed">
+              NŪRA — это пространство для мусульманских женщин, которые хотят выглядеть
+              стильно и элегантно, не жертвуя своими ценностями. Мы создаём гайды,
+              проводим курсы и подбираем идеальные образы, чтобы каждая из вас чувствовала
+              себя уверенно и красиво.
+            </p>
+          </div>
+
+          {/* Animated stats */}
+          <div ref={stats.ref} style={stats.style} className="pt-8">
+            <div className="grid grid-cols-3 gap-8">
+              <div className="text-center" ref={clients.ref as any}>
+                <p className="font-display text-4xl md:text-5xl font-bold text-gold tabular-nums">
+                  {clients.count}+
+                </p>
+                <p className="font-body text-xs tracking-widest uppercase text-primary-foreground/50 mt-2">Клиентов</p>
+              </div>
+              <div className="text-center" ref={looks.ref as any}>
+                <p className="font-display text-4xl md:text-5xl font-bold text-gold tabular-nums">
+                  {looks.count}+
+                </p>
+                <p className="font-body text-xs tracking-widest uppercase text-primary-foreground/50 mt-2">Образов</p>
+              </div>
+              <div className="text-center" ref={rating.ref as any}>
+                <p className="font-display text-4xl md:text-5xl font-bold text-gold tabular-nums">
+                  {(rating.count / 10).toFixed(1)}
+                </p>
+                <p className="font-body text-xs tracking-widest uppercase text-primary-foreground/50 mt-2">Рейтинг</p>
+              </div>
             </div>
           </div>
         </div>
