@@ -1,17 +1,22 @@
-import { useSmoothScroll } from "@/hooks/useSmoothScroll";
+import { useEffect, useState } from "react";
 
 const ScrollProgress = () => {
-  const { scrollProgress } = useSmoothScroll();
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(h > 0 ? (window.scrollY / h) * 100 : 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] h-[2px]" aria-hidden="true">
+    <div className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-transparent">
       <div
-        className="h-full origin-left"
-        style={{
-          transform: `scaleX(${scrollProgress})`,
-          background: "linear-gradient(90deg, hsl(var(--gold)), hsl(38, 70%, 65%), hsl(var(--gold)))",
-          transition: "transform 0.1s linear",
-        }}
+        className="h-full bg-gradient-to-r from-rose via-terra to-sage transition-all duration-150"
+        style={{ width: `${progress}%` }}
       />
     </div>
   );
