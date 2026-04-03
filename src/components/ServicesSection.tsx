@@ -1,114 +1,40 @@
-import { ArrowUpRight } from "lucide-react";
-import serviceGuide from "@/assets/service-guide.jpg";
-import serviceCourse from "@/assets/service-course.jpg";
-import serviceWardrobe from "@/assets/service-wardrobe.jpg";
-import serviceHijab from "@/assets/service-hijab.jpg";
 import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
-import { useTilt } from "@/hooks/useTilt";
+import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 const services = [
-  {
-    title: "Стайл-гайд",
-    subtitle: "Руководство по стилю",
-    description: "Полное пошаговое руководство по созданию стильного и скромного гардероба.",
-    image: serviceGuide,
-    price: "2 990 ₽",
-    tag: "PDF ГАЙД",
-    num: "01",
-  },
-  {
-    title: "Онлайн-курс",
-    subtitle: "Искусство скромной моды",
-    description: "Углублённый курс по построению гардероба и подбору образов на все случаи жизни.",
-    image: serviceCourse,
-    price: "12 990 ₽",
-    tag: "ВИДЕО КУРС",
-    num: "02",
-  },
-  {
-    title: "Разбор гардероба",
-    subtitle: "Персональная консультация",
-    description: "Индивидуальный разбор вашего гардероба с рекомендациями по обновлению.",
-    image: serviceWardrobe,
-    price: "7 990 ₽",
-    tag: "КОНСУЛЬТАЦИЯ",
-    num: "03",
-  },
-  {
-    title: "Подбор хиджаба",
-    subtitle: "По форме лица",
-    description: "Профессиональный подбор идеального хиджаба с учётом формы вашего лица.",
-    image: serviceHijab,
-    price: "4 990 ₽",
-    tag: "ПОДБОР",
-    num: "04",
-  },
+  { num: "01", title: "Стайл-гайд", subtitle: "Персональный подход", desc: "Индивидуальная карта стиля с учётом ваших предпочтений, типа фигуры и образа жизни.", image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&q=80", price: "от 5 000 ₽" },
+  { num: "02", title: "Онлайн-курс", subtitle: "Modest Fashion Academy", desc: "Полный курс по стилю в modest fashion: от базового гардероба до создания сложных образов.", image: "https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?w=800&q=80", price: "от 12 000 ₽" },
+  { num: "03", title: "Разбор гардероба", subtitle: "Капсульная система", desc: "Аудит текущего гардероба и создание функциональной капсулы из существующих вещей.", image: "https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80", price: "от 8 000 ₽" },
+  { num: "04", title: "Подбор хиджаба", subtitle: "По форме лица", desc: "Профессиональный подбор формы, ткани и способа повязки хиджаба под вашу форму лица.", image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d44?w=800&q=80", price: "от 3 000 ₽" },
 ];
 
-const animationTypes = ["fade-left", "fade-right", "fade-left", "fade-right"] as const;
-
 const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
-  const { ref: tiltRef, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
-  const reveal = useAnimatedReveal({
-    type: animationTypes[index] as any,
-    delay: 100,
-    duration: 900,
-  });
+  const reveal = useAnimatedReveal({ type: "fade-up", delay: index * 100, duration: 1000 });
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <div
-      ref={reveal.ref}
-      style={reveal.style}
-      className="group grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer"
-    >
-      {/* Image with 3D tilt */}
-      <div
-        ref={tiltRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className={`relative overflow-hidden ${index % 2 !== 0 ? "md:order-2" : ""}`}
-        style={{ transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
-      >
-        <img
-          src={service.image}
-          alt={service.title}
-          loading="lazy"
-          width={800}
-          height={600}
-          className="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
-        />
-        {/* Animated shine on hover */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
-        {/* Color overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <div className="absolute top-4 left-4 glass px-3 py-1.5 group-hover:bg-gold group-hover:border-gold transition-all duration-500">
-          <span className="text-[10px] font-body font-semibold tracking-[0.2em] uppercase text-foreground group-hover:text-gold-foreground transition-colors">
-            {service.tag}
-          </span>
+    <div ref={reveal.ref} style={reveal.style} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} className="group border-b border-border/50 py-8 md:py-12 cursor-pointer">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        <div className="md:col-span-1">
+          <span className="font-body text-[11px] text-muted-foreground tracking-wider">{service.num}</span>
         </div>
-        <span className="absolute bottom-4 right-4 font-display text-6xl md:text-8xl font-black text-primary-foreground/5 select-none leading-none group-hover:text-gold/10 transition-colors duration-700">
-          {service.num}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className={`space-y-4 ${index % 2 !== 0 ? "md:order-1 md:text-right" : ""}`}>
-        <div>
-          <span className="font-body text-[10px] font-semibold tracking-[0.3em] uppercase text-gold">
-            {service.subtitle}
-          </span>
-          <h3 className="font-display text-2xl md:text-4xl font-bold text-foreground mt-2 group-hover:text-gold transition-colors duration-500">
-            {service.title}
-          </h3>
+        <div className="md:col-span-3">
+          <span className="font-body text-[10px] tracking-[0.3em] uppercase text-brand block mb-1">{service.subtitle}</span>
+          <h3 className="font-display text-2xl md:text-3xl font-light text-foreground group-hover:text-brand transition-colors duration-500">{service.title}</h3>
         </div>
-        <p className="font-body text-sm text-muted-foreground leading-relaxed max-w-md">
-          {service.description}
-        </p>
-        <div className={`flex items-center gap-4 pt-4 ${index % 2 !== 0 ? "md:justify-end" : ""}`}>
-          <span className="font-display text-2xl font-bold text-foreground">{service.price}</span>
-          <div className="p-3 border border-border group-hover:border-gold group-hover:bg-gold group-hover:text-gold-foreground transition-all duration-500 group-hover:rotate-[360deg] group-hover:shadow-[0_8px_30px_hsl(var(--gold)/0.3)]">
-            <ArrowUpRight size={18} />
+        <div className="md:col-span-3 hidden md:block">
+          <div className={`h-20 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${hovered ? "w-full opacity-100" : "w-0 opacity-0"}`}>
+            <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+          </div>
+        </div>
+        <div className="md:col-span-3">
+          <p className="font-body text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
+        </div>
+        <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-4">
+          <span className="font-body text-sm text-foreground">{service.price}</span>
+          <div className={`w-10 h-10 border border-border flex items-center justify-center transition-all duration-500 ${hovered ? "bg-brand border-brand" : ""}`}>
+            <ArrowRight size={14} className={`transition-all duration-500 ${hovered ? "text-brand-foreground translate-x-0.5" : "text-foreground"}`} />
           </div>
         </div>
       </div>
@@ -117,29 +43,20 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
 };
 
 const ServicesSection = () => {
-  const header = useAnimatedReveal({ type: "flip-up", duration: 1000 });
+  const header = useAnimatedReveal({ type: "fade-up", delay: 0, duration: 1000 });
 
   return (
-    <section id="services" className="py-24 md:py-36 bg-background relative overflow-hidden">
-      {/* Animated decorative lines */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-transparent to-gold/30 animate-grow-line" />
-      <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-gold/3 blur-3xl animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-20 right-10 w-60 h-60 rounded-full bg-gold/3 blur-3xl animate-pulse-slow pointer-events-none" style={{ animationDelay: "3s" }} />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={header.ref} style={header.style} className="mb-20 md:mb-28">
-          <p className="text-xs font-body font-medium tracking-[0.3em] uppercase text-gold mb-3">
-            Что мы предлагаем
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
-            Наши <span className="italic gradient-text">услуги</span>
+    <section id="services" className="py-24 md:py-36 relative">
+      <div className="absolute top-0 left-1/2 w-[1px] h-20 bg-gradient-to-b from-transparent to-border/50 -translate-x-1/2" />
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+        <div ref={header.ref} style={header.style} className="mb-16">
+          <span className="font-body text-[10px] tracking-[0.5em] uppercase text-brand mb-4 block">Услуги</span>
+          <h2 className="font-display text-4xl md:text-6xl font-light tracking-[0.02em] text-foreground">
+            Персональный<br /><span className="italic">стиль</span>
           </h2>
         </div>
-
-        <div className="space-y-20 md:space-y-32">
-          {services.map((service, index) => (
-            <ServiceCard key={index} service={service} index={index} />
-          ))}
+        <div>
+          {services.map((s, i) => <ServiceCard key={s.num} service={s} index={i} />)}
         </div>
       </div>
     </section>
