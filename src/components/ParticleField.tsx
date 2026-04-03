@@ -10,9 +10,9 @@ const ParticleField = () => {
     if (!ctx) return;
 
     let animationId: number;
-    let particles: Array<{
+    const particles: Array<{
       x: number; y: number; vx: number; vy: number;
-      size: number; opacity: number; hue: number;
+      size: number; opacity: number; hue: number; sat: number;
     }> = [];
 
     const resize = () => {
@@ -22,26 +22,24 @@ const ParticleField = () => {
     resize();
     window.addEventListener("resize", resize);
 
-    // Create particles
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 40; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.1,
-        hue: 38 + Math.random() * 10,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.3 + 0.05,
+        hue: [8, 18, 150][Math.floor(Math.random() * 3)],
+        sat: 40 + Math.random() * 20,
       });
     }
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       particles.forEach((p, i) => {
         p.x += p.vx;
         p.y += p.vy;
-
         if (p.x < 0) p.x = canvas.width;
         if (p.x > canvas.width) p.x = 0;
         if (p.y < 0) p.y = canvas.height;
@@ -49,28 +47,25 @@ const ParticleField = () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 60%, 55%, ${p.opacity})`;
+        ctx.fillStyle = `hsla(${p.hue}, ${p.sat}%, 55%, ${p.opacity})`;
         ctx.fill();
 
-        // Draw connections
         for (let j = i + 1; j < particles.length; j++) {
           const dx = p.x - particles[j].x;
           const dy = p.y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
+          if (dist < 120) {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `hsla(38, 60%, 55%, ${0.08 * (1 - dist / 150)})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `hsla(${p.hue}, 30%, 55%, ${0.04 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.3;
             ctx.stroke();
           }
         }
       });
-
       animationId = requestAnimationFrame(animate);
     };
-
     animate();
 
     return () => {
@@ -83,7 +78,7 @@ const ParticleField = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.4 }}
       aria-hidden="true"
     />
   );
