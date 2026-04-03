@@ -1,114 +1,69 @@
-import { ArrowUpRight } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { ArrowUpRight, Palette, BookOpen, Scissors, Sparkles } from "lucide-react";
 import serviceGuide from "@/assets/service-guide.jpg";
 import serviceCourse from "@/assets/service-course.jpg";
 import serviceWardrobe from "@/assets/service-wardrobe.jpg";
 import serviceHijab from "@/assets/service-hijab.jpg";
-import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
-import { useTilt } from "@/hooks/useTilt";
 
 const services = [
-  {
-    title: "Стайл-гайд",
-    subtitle: "Руководство по стилю",
-    description: "Полное пошаговое руководство по созданию стильного и скромного гардероба.",
-    image: serviceGuide,
-    price: "2 990 ₽",
-    tag: "PDF ГАЙД",
-    num: "01",
-  },
-  {
-    title: "Онлайн-курс",
-    subtitle: "Искусство скромной моды",
-    description: "Углублённый курс по построению гардероба и подбору образов на все случаи жизни.",
-    image: serviceCourse,
-    price: "12 990 ₽",
-    tag: "ВИДЕО КУРС",
-    num: "02",
-  },
-  {
-    title: "Разбор гардероба",
-    subtitle: "Персональная консультация",
-    description: "Индивидуальный разбор вашего гардероба с рекомендациями по обновлению.",
-    image: serviceWardrobe,
-    price: "7 990 ₽",
-    tag: "КОНСУЛЬТАЦИЯ",
-    num: "03",
-  },
-  {
-    title: "Подбор хиджаба",
-    subtitle: "По форме лица",
-    description: "Профессиональный подбор идеального хиджаба с учётом формы вашего лица.",
-    image: serviceHijab,
-    price: "4 990 ₽",
-    tag: "ПОДБОР",
-    num: "04",
-  },
+  { num: "01", title: "Стайл-гайд", desc: "Персональные рекомендации по созданию элегантного гардероба.", img: serviceGuide, icon: BookOpen },
+  { num: "02", title: "Онлайн-курс", desc: "Видеоуроки по сочетанию модных трендов с исламскими ценностями.", img: serviceCourse, icon: Palette },
+  { num: "03", title: "Разбор гардероба", desc: "Полный аудит и составление капсульной коллекции.", img: serviceWardrobe, icon: Scissors },
+  { num: "04", title: "Подбор хиджаба", desc: "Индивидуальный подбор по форме лица и цветотипу.", img: serviceHijab, icon: Sparkles },
 ];
 
-const animationTypes = ["fade-left", "fade-right", "fade-left", "fade-right"] as const;
-
 const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
-  const { ref: tiltRef, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
-  const reveal = useAnimatedReveal({
-    type: animationTypes[index] as any,
-    delay: 100,
-    duration: 900,
-  });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => e.isIntersecting && setVisible(true), { threshold: 0.2 });
+    if (cardRef.current) obs.observe(cardRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const handleMouse = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const r = cardRef.current.getBoundingClientRect();
+    setMouse({ x: ((e.clientX - r.left) / r.width - 0.5) * 12, y: ((e.clientY - r.top) / r.height - 0.5) * 12 });
+  };
+
+  const Icon = service.icon;
 
   return (
     <div
-      ref={reveal.ref}
-      style={reveal.style}
-      className="group grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer"
+      ref={cardRef}
+      onMouseMove={handleMouse}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setMouse({ x: 0, y: 0 }); }}
+      className={`group relative transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"}`}
+      style={{ transitionDelay: `${index * 150}ms`, perspective: "1000px" }}
     >
-      {/* Image with 3D tilt */}
       <div
-        ref={tiltRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className={`relative overflow-hidden ${index % 2 !== 0 ? "md:order-2" : ""}`}
-        style={{ transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
+        className="relative overflow-hidden rounded-2xl bg-card border border-border/50 transition-all duration-500 hover:shadow-2xl hover:shadow-rose/5 hover:border-rose/20"
+        style={{
+          transform: hovered ? `rotateY(${mouse.x * 0.5}deg) rotateX(${-mouse.y * 0.5}deg) translateZ(10px)` : "none",
+          transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s, border-color 0.5s",
+        }}
       >
-        <img
-          src={service.image}
-          alt={service.title}
-          loading="lazy"
-          width={800}
-          height={600}
-          className="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
-        />
-        {/* Animated shine on hover */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
-        {/* Color overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <div className="absolute top-4 left-4 glass px-3 py-1.5 group-hover:bg-gold group-hover:border-gold transition-all duration-500">
-          <span className="text-[10px] font-body font-semibold tracking-[0.2em] uppercase text-foreground group-hover:text-gold-foreground transition-colors">
-            {service.tag}
-          </span>
+        <div className="relative h-64 overflow-hidden">
+          <img src={service.img} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+          <div className="absolute top-4 left-4 w-10 h-10 rounded-full glass-panel flex items-center justify-center">
+            <span className="font-display text-sm font-light text-foreground">{service.num}</span>
+          </div>
+          <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-rose/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <Icon size={16} className="text-rose" />
+          </div>
         </div>
-        <span className="absolute bottom-4 right-4 font-display text-6xl md:text-8xl font-black text-primary-foreground/5 select-none leading-none group-hover:text-gold/10 transition-colors duration-700">
-          {service.num}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className={`space-y-4 ${index % 2 !== 0 ? "md:order-1 md:text-right" : ""}`}>
-        <div>
-          <span className="font-body text-[10px] font-semibold tracking-[0.3em] uppercase text-gold">
-            {service.subtitle}
-          </span>
-          <h3 className="font-display text-2xl md:text-4xl font-bold text-foreground mt-2 group-hover:text-gold transition-colors duration-500">
-            {service.title}
-          </h3>
-        </div>
-        <p className="font-body text-sm text-muted-foreground leading-relaxed max-w-md">
-          {service.description}
-        </p>
-        <div className={`flex items-center gap-4 pt-4 ${index % 2 !== 0 ? "md:justify-end" : ""}`}>
-          <span className="font-display text-2xl font-bold text-foreground">{service.price}</span>
-          <div className="p-3 border border-border group-hover:border-gold group-hover:bg-gold group-hover:text-gold-foreground transition-all duration-500 group-hover:rotate-[360deg] group-hover:shadow-[0_8px_30px_hsl(var(--gold)/0.3)]">
-            <ArrowUpRight size={18} />
+        <div className="p-6">
+          <h3 className="font-display text-xl font-medium text-foreground mb-2 group-hover:text-rose transition-colors duration-300">{service.title}</h3>
+          <p className="font-body text-xs text-muted-foreground leading-relaxed mb-4">{service.desc}</p>
+          <div className="flex items-center gap-2 text-rose opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+            <span className="text-[10px] font-body font-semibold tracking-[0.2em] uppercase">Подробнее</span>
+            <ArrowUpRight size={12} />
           </div>
         </div>
       </div>
@@ -117,29 +72,31 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
 };
 
 const ServicesSection = () => {
-  const header = useAnimatedReveal({ type: "flip-up", duration: 1000 });
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerVisible, setHeaderVisible] = useState(false);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => e.isIntersecting && setHeaderVisible(true), { threshold: 0.3 });
+    if (headerRef.current) obs.observe(headerRef.current);
+    return () => obs.disconnect();
+  }, []);
 
   return (
-    <section id="services" className="py-24 md:py-36 bg-background relative overflow-hidden">
-      {/* Animated decorative lines */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-transparent to-gold/30 animate-grow-line" />
-      <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-gold/3 blur-3xl animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-20 right-10 w-60 h-60 rounded-full bg-gold/3 blur-3xl animate-pulse-slow pointer-events-none" style={{ animationDelay: "3s" }} />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={header.ref} style={header.style} className="mb-20 md:mb-28">
-          <p className="text-xs font-body font-medium tracking-[0.3em] uppercase text-gold mb-3">
-            Что мы предлагаем
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
-            Наши <span className="italic gradient-text">услуги</span>
+    <section id="services" className="py-24 md:py-32 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-rose/[0.03] blur-[120px] pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-5 sm:px-8">
+        <div ref={headerRef} className={`text-center mb-16 md:mb-20 transition-all duration-1000 ${headerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-px bg-rose/50" />
+            <span className="text-[10px] font-body font-semibold tracking-[0.4em] uppercase text-rose">Наши услуги</span>
+            <div className="w-12 h-px bg-rose/50" />
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-4">
+            Ваш путь к <span className="italic gradient-rose">совершенному</span> стилю
           </h2>
         </div>
-
-        <div className="space-y-20 md:space-y-32">
-          {services.map((service, index) => (
-            <ServiceCard key={index} service={service} index={index} />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((s, i) => (<ServiceCard key={s.num} service={s} index={i} />))}
         </div>
       </div>
     </section>
