@@ -2,37 +2,25 @@ import { ArrowUpRight } from "lucide-react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
 import { useTilt } from "@/hooks/useTilt";
 
 const products = [
-  {
-    name: "Шёлковый хиджаб «Нежность»",
-    price: "3 490 ₽",
-    image: product1,
-    category: "Хиджабы",
-  },
-  {
-    name: "Атласный хиджаб «Ночь»",
-    price: "2 990 ₽",
-    image: product2,
-    category: "Хиджабы",
-  },
-  {
-    name: "Набор украшений «Золото»",
-    price: "5 490 ₽",
-    image: product3,
-    category: "Аксессуары",
-  },
+  { name: "Шёлковый хиджаб «Нежность»", price: "3 490 ₽", image: product1, category: "Хиджабы" },
+  { name: "Атласный хиджаб «Ночь»", price: "2 990 ₽", image: product2, category: "Хиджабы" },
+  { name: "Набор украшений «Золото»", price: "5 490 ₽", image: product3, category: "Аксессуары" },
 ];
 
+const animTypes = ["fade-up", "zoom-in", "fade-up"] as const;
+
 const ProductCard = ({ product, index }: { product: typeof products[0]; index: number }) => {
-  const { ref, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
+  const { ref: tiltRef, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(12);
+  const reveal = useAnimatedReveal({ type: animTypes[index] as any, delay: index * 150, duration: 800 });
 
   return (
-    <div className={`reveal reveal-delay-${index + 1} group cursor-pointer`}>
+    <div ref={reveal.ref} style={reveal.style} className="group cursor-pointer">
       <div
-        ref={ref}
+        ref={tiltRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className="relative overflow-hidden bg-background mb-4"
@@ -44,21 +32,31 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
           loading="lazy"
           width={600}
           height={800}
-          className="w-full h-[400px] md:h-[480px] object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="w-full h-[400px] md:h-[500px] object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
         />
-        {/* Shine sweep */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-          <button className="w-full py-3.5 bg-primary-foreground text-primary font-body text-xs font-medium tracking-[0.15em] uppercase hover:bg-gold hover:text-gold-foreground transition-colors duration-300">
+        {/* Animated shine sweep */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        {/* Add to cart */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <button className="w-full py-3.5 bg-primary-foreground text-primary font-body text-xs font-medium tracking-[0.15em] uppercase hover:bg-gold hover:text-gold-foreground transition-all duration-300 hover:shadow-[0_5px_20px_hsl(var(--gold)/0.3)]">
             В корзину
           </button>
         </div>
         {/* Quick view */}
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-          <div className="w-10 h-10 glass flex items-center justify-center cursor-pointer hover:bg-gold hover:text-gold-foreground transition-colors">
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 group-hover:translate-y-0 rotate-12 group-hover:rotate-0">
+          <div className="w-10 h-10 glass flex items-center justify-center cursor-pointer hover:bg-gold hover:text-gold-foreground transition-all duration-300">
             <ArrowUpRight size={16} />
+          </div>
+        </div>
+        {/* Category badge */}
+        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-[-10px] group-hover:translate-x-0">
+          <div className="glass px-3 py-1.5">
+            <span className="text-[10px] font-body font-semibold tracking-widest uppercase text-foreground">
+              {product.category}
+            </span>
           </div>
         </div>
       </div>
@@ -69,7 +67,7 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
         <h3 className="font-body text-sm font-medium text-foreground group-hover:text-gold transition-colors duration-300">
           {product.name}
         </h3>
-        <p className="font-display text-base font-semibold text-foreground">
+        <p className="font-display text-lg font-semibold text-foreground">
           {product.price}
         </p>
       </div>
@@ -78,47 +76,47 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
 };
 
 const ShopSection = () => {
-  const ref = useScrollReveal<HTMLElement>();
+  const header = useAnimatedReveal({ type: "blur-in", duration: 900 });
 
   return (
-    <section ref={ref} id="shop" className="py-20 md:py-32 bg-cream relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-20 right-0 w-64 h-64 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 left-0 w-48 h-48 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
+    <section id="shop" className="py-24 md:py-36 bg-cream relative overflow-hidden">
+      {/* Decorative animated orbs */}
+      <div className="absolute top-20 right-0 w-80 h-80 rounded-full bg-gold/5 blur-3xl pointer-events-none animate-pulse-slow" />
+      <div className="absolute bottom-20 left-0 w-64 h-64 rounded-full bg-gold/5 blur-3xl pointer-events-none animate-pulse-slow" style={{ animationDelay: "2s" }} />
+
+      {/* Animated grid lines */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `linear-gradient(hsl(var(--gold)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--gold)) 1px, transparent 1px)`,
+        backgroundSize: '80px 80px',
+      }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <div className="reveal flex items-end justify-between mb-12 md:mb-16">
+        <div ref={header.ref} style={header.style} className="flex items-end justify-between mb-16 md:mb-20">
           <div>
             <p className="text-xs font-body font-medium tracking-[0.3em] uppercase text-gold mb-3">
               Магазин
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-foreground">
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
               Новые <span className="italic gradient-text">поступления</span>
             </h2>
           </div>
           <a
             href="#"
-            className="hidden sm:inline-flex items-center gap-2 font-body text-xs font-medium tracking-[0.15em] uppercase text-foreground line-draw"
+            className="hidden sm:inline-flex items-center gap-2 font-body text-xs font-medium tracking-[0.15em] uppercase text-foreground line-draw hover:-translate-y-0.5 transition-transform"
           >
             Смотреть все
             <ArrowUpRight size={14} />
           </a>
         </div>
 
-        {/* Products grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {products.map((product, index) => (
             <ProductCard key={index} product={product} index={index} />
           ))}
         </div>
 
-        {/* Mobile see all */}
         <div className="sm:hidden mt-8 text-center">
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 font-body text-xs font-medium tracking-[0.15em] uppercase text-foreground line-draw"
-          >
+          <a href="#" className="inline-flex items-center gap-2 font-body text-xs font-medium tracking-[0.15em] uppercase text-foreground line-draw">
             Смотреть все
             <ArrowUpRight size={14} />
           </a>
