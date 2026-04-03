@@ -1,170 +1,136 @@
+import { useEffect, useRef, useState } from "react";
 import heroModel from "@/assets/hero-model.jpg";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useMouseParallax } from "@/hooks/useMouseParallax";
-import { useTypewriter } from "@/hooks/useTypewriter";
-import FloatingShapes from "@/components/FloatingShapes";
-import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
+import { ArrowDownRight, Play } from "lucide-react";
 
 const HeroSection = () => {
-  const ref = useScrollReveal<HTMLElement>();
-  const p = useMouseParallax(0.6);
-  const { displayed: typedText, isDone } = useTypewriter("Откройте для себя мир элегантной исламской моды.", 40, 1200);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [scrollY, setScrollY] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  const badge = useAnimatedReveal({ type: "blur-in", delay: 200 });
-  const title1 = useAnimatedReveal({ type: "fade-up", delay: 400, duration: 1000 });
-  const title2 = useAnimatedReveal({ type: "slide-rotate", delay: 700, duration: 1200 });
-  const desc = useAnimatedReveal({ type: "fade-up", delay: 1000 });
-  const btns = useAnimatedReveal({ type: "fade-up", delay: 1300 });
+  useEffect(() => {
+    setLoaded(true);
+    const handleScroll = () => setScrollY(window.scrollY);
+    const handleMouse = (e: MouseEvent) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth - 0.5) * 2,
+        y: (e.clientY / window.innerHeight - 0.5) * 2,
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("mousemove", handleMouse, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("mousemove", handleMouse);
+    };
+  }, []);
+
+  const parallax = scrollY * 0.3;
 
   return (
-    <section ref={ref} className="relative pt-20 md:pt-0 bg-background min-h-screen flex items-center overflow-hidden">
-      {/* Animated mesh gradient background */}
+    <section ref={sectionRef} className="relative min-h-screen flex items-end pb-16 md:pb-24 overflow-hidden">
+      {/* Full-screen image with parallax */}
       <div className="absolute inset-0 overflow-hidden">
         <div
-          className="absolute w-[800px] h-[800px] rounded-full"
-          style={{
-            background: "radial-gradient(circle, hsl(var(--gold) / 0.06) 0%, transparent 70%)",
-            top: "10%",
-            left: "20%",
-            transform: `translate(${p.x * 2}px, ${p.y * 2}px)`,
-            transition: "transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)",
-            filter: "blur(80px)",
-            animation: "morph 15s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full"
-          style={{
-            background: "radial-gradient(circle, hsl(var(--gold) / 0.04) 0%, transparent 70%)",
-            bottom: "10%",
-            right: "10%",
-            transform: `translate(${-p.x * 1.5}px, ${-p.y * 1.5}px)`,
-            transition: "transform 1.8s cubic-bezier(0.16, 1, 0.3, 1)",
-            filter: "blur(60px)",
-            animation: "morph 20s ease-in-out infinite reverse",
-          }}
-        />
+          className="absolute inset-0 transition-transform duration-[1.5s]"
+          style={{ transform: `translateY(${parallax}px) scale(${1 + scrollY * 0.0002})` }}
+        >
+          <img
+            src={heroModel}
+            alt="Элегантная исламская мода"
+            className={`w-full h-full object-cover transition-all duration-[2s] ${loaded ? "scale-100 opacity-100" : "scale-110 opacity-0"}`}
+            style={{
+              transform: `translate(${mousePos.x * 8}px, ${mousePos.y * 5}px)`,
+              transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          />
+        </div>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent" />
       </div>
 
-      {/* Dot grid */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `radial-gradient(hsl(var(--gold)) 1px, transparent 1px)`,
-        backgroundSize: '40px 40px',
-      }} />
+      {/* Floating decorative elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Orbiting dot */}
+        <div className="absolute top-1/3 left-1/3 w-2 h-2 rounded-full bg-rose/60 animate-orbit" />
+        {/* Breathing circle */}
+        <div className="absolute top-20 right-20 w-32 h-32 rounded-full border border-rose/10 animate-breathe" />
+        {/* Morphing blob */}
+        <div
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 animate-morph opacity-20"
+          style={{
+            background: `radial-gradient(circle, hsl(var(--rose) / 0.15), transparent 70%)`,
+            transform: `translate(${mousePos.x * 20}px, ${mousePos.y * 15}px)`,
+            transition: "transform 1.5s ease-out",
+          }}
+        />
+        {/* Animated vertical line */}
+        <div className="absolute left-12 md:left-20 top-0 h-full">
+          <div className={`w-px bg-gradient-to-b from-transparent via-rose/30 to-transparent transition-all duration-[2s] ${loaded ? "h-full" : "h-0"}`} />
+        </div>
+      </div>
 
-      <FloatingShapes />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          {/* Left - Text */}
-          <div className="order-2 lg:order-1 space-y-6 md:space-y-8 pb-8 lg:pb-0">
-            <div className="space-y-4">
-              <div ref={badge.ref} style={badge.style}>
-                <p className="inline-flex items-center gap-2 text-xs font-body font-medium tracking-[0.3em] uppercase text-gold">
-                  <Sparkles size={12} className="animate-pulse-glow" />
-                  Скромная мода • Элегантность
-                  <Sparkles size={12} className="animate-pulse-glow" />
-                </p>
-              </div>
-
-              <div ref={title1.ref} style={title1.style}>
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] text-foreground">
-                  Красота в
-                </h1>
-              </div>
-              <div ref={title2.ref} style={title2.style}>
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05]">
-                  <span className="italic gradient-text text-shimmer">скромности</span>
-                </h1>
-              </div>
-            </div>
-
-            <div ref={desc.ref} style={desc.style}>
-              <p className="font-body text-muted-foreground text-base md:text-lg leading-relaxed max-w-md">
-                {typedText}
-                {!isDone && <span className="inline-block w-0.5 h-5 bg-gold ml-0.5 animate-blink" />}
-              </p>
-            </div>
-
-            <div ref={btns.ref} style={btns.style} className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="#services"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body text-xs font-medium tracking-[0.15em] uppercase transition-all duration-500 hover:shadow-[0_15px_50px_hsl(var(--gold)/0.4)] hover:-translate-y-1 hover:bg-gold hover:text-gold-foreground relative overflow-hidden"
-              >
-                <span className="relative z-10">Наши услуги</span>
-                <ArrowRight size={14} className="relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-r from-gold via-gold-light to-gold opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </a>
-              <a
-                href="#shop"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 border border-foreground text-foreground font-body text-xs font-medium tracking-[0.15em] uppercase hover:bg-foreground hover:text-background transition-all duration-500 hover:-translate-y-1 hover:shadow-lg"
-              >
-                Магазин
-              </a>
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 w-full">
+        <div className="max-w-2xl">
+          {/* Label */}
+          <div className={`transition-all duration-1000 delay-300 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-px bg-rose" />
+              <span className="text-[10px] font-body font-semibold tracking-[0.4em] uppercase text-rose">
+                Коллекция 2026
+              </span>
             </div>
           </div>
 
-          {/* Right - 3D Image */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end" style={{ perspective: "1200px" }}>
-            <div
-              className="relative w-full max-w-md lg:max-w-lg"
-              style={{
-                transform: `rotateX(${p.rotateX * 0.4}deg) rotateY(${p.rotateY * 0.4}deg)`,
-                transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
-                transformStyle: "preserve-3d",
-                animation: "float-3d 6s ease-in-out infinite",
-              }}
+          {/* Title */}
+          <div className={`transition-all duration-1000 delay-500 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light leading-[0.95] text-foreground mb-2">
+              Искусство
+            </h1>
+          </div>
+          <div className={`transition-all duration-1000 delay-700 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light leading-[0.95] mb-6">
+              <span className="italic gradient-rose">скромной</span>
+              <span className="text-foreground"> моды</span>
+            </h1>
+          </div>
+
+          {/* Description */}
+          <div className={`transition-all duration-1000 delay-[900ms] ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed max-w-md mb-10">
+              Утончённая элегантность, современный дизайн и уважение к традициям — всё в одном месте.
+            </p>
+          </div>
+
+          {/* CTA */}
+          <div className={`flex flex-wrap items-center gap-4 transition-all duration-1000 delay-[1100ms] ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <a
+              href="#shop"
+              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background font-body text-[11px] font-medium tracking-[0.2em] uppercase overflow-hidden transition-all duration-500 hover:shadow-2xl rounded-full"
             >
-              {/* Glow behind */}
-              <div className="absolute inset-0 bg-gold/10 blur-3xl -z-10 scale-125 animate-pulse-slow" />
+              <span className="relative z-10">Смотреть коллекцию</span>
+              <ArrowDownRight size={14} className="relative z-10 group-hover:rotate-45 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-rose to-terra translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            </a>
+            <button className="group flex items-center gap-3 px-6 py-4 font-body text-[11px] font-medium tracking-[0.2em] uppercase text-foreground hover:text-rose transition-colors duration-300">
+              <span className="relative w-10 h-10 rounded-full border border-foreground/30 flex items-center justify-center group-hover:border-rose group-hover:bg-rose/5 transition-all duration-500">
+                <Play size={12} className="ml-0.5" />
+                <span className="absolute inset-0 rounded-full border border-foreground/10 animate-pulse-ring" />
+              </span>
+              О бренде
+            </button>
+          </div>
+        </div>
 
-              {/* 3D frame layers */}
-              <div className="absolute -top-6 -right-6 w-full h-full border border-gold/20 pointer-events-none" style={{ transform: "translateZ(-40px)" }} />
-              <div className="absolute -top-3 -right-3 w-full h-full border border-gold/10 pointer-events-none" style={{ transform: "translateZ(-20px)" }} />
-              <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b border-l border-gold/30 pointer-events-none" style={{ transform: "translateZ(-30px)" }} />
-
-              <img
-                src={heroModel}
-                alt="Элегантная модель в хиджабе"
-                width={800}
-                height={1100}
-                className="w-full h-auto object-cover relative z-10 hero-image-reveal"
-                style={{ transform: "translateZ(30px)" }}
-              />
-
-              {/* Shine sweep on image */}
-              <div
-                className="absolute inset-0 z-20 pointer-events-none"
-                style={{
-                  background: "linear-gradient(105deg, transparent 40%, hsla(38, 60%, 70%, 0.15) 50%, transparent 60%)",
-                  animation: "shine-sweep 4s ease-in-out infinite",
-                  transform: "translateZ(35px)",
-                }}
-              />
-
-              <div
-                className="absolute bottom-8 left-0 z-30 glass px-5 py-3 shadow-xl"
-                style={{
-                  transform: "translateZ(60px)",
-                  animation: "float 4s ease-in-out infinite",
-                }}
-              >
-                <p className="font-display text-sm font-semibold text-foreground">Новая коллекция</p>
-                <p className="font-body text-xs text-muted-foreground">Весна 2026</p>
-              </div>
-
-              {/* Floating badge */}
-              <div
-                className="absolute top-8 right-4 z-30 glass px-3 py-2 shadow-lg"
-                style={{
-                  transform: "translateZ(50px)",
-                  animation: "float 5s ease-in-out infinite reverse",
-                }}
-              >
-                <p className="font-body text-[10px] font-semibold text-gold tracking-widest uppercase">Premium</p>
-              </div>
-            </div>
+        {/* Bottom scroll indicator */}
+        <div className={`absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-3 transition-all duration-1000 delay-[1300ms] ${loaded ? "opacity-100" : "opacity-0"}`}>
+          <span className="text-[9px] font-body tracking-[0.3em] uppercase text-muted-foreground" style={{ writingMode: "vertical-rl" }}>
+            Листайте вниз
+          </span>
+          <div className="w-px h-12 bg-gradient-to-b from-rose/50 to-transparent relative overflow-hidden">
+            <div className="w-full h-4 bg-rose absolute animate-bounce" style={{ animationDuration: "2s" }} />
           </div>
         </div>
       </div>
