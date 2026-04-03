@@ -31,19 +31,6 @@ const AboutSection = () => {
             себя уверенно и красиво.
           </p>
 
-          {/* Stats */}
-          <div className="reveal reveal-delay-3 grid grid-cols-3 gap-8 pt-10 border-t border-primary-foreground/10">
-            {stats.map((stat, i) => (
-              <div key={i} className="group">
-                <p className="font-display text-3xl md:text-4xl font-bold gradient-text group-hover:scale-110 transition-transform duration-300 inline-block">
-                  {stat.value}
-                </p>
-                <p className="font-body text-xs text-primary-foreground/50 mt-2 tracking-[0.15em] uppercase">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
