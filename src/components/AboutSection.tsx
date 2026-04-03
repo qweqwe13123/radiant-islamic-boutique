@@ -1,19 +1,47 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-
-const stats = [
-  { value: "500+", label: "Клиентов" },
-  { value: "50+", label: "Образов" },
-  { value: "4.9", label: "Рейтинг" },
-];
+import { useMouseParallax } from "@/hooks/useMouseParallax";
 
 const AboutSection = () => {
   const ref = useScrollReveal<HTMLElement>();
+  const p = useMouseParallax(0.3);
 
   return (
     <section ref={ref} id="about" className="py-20 md:py-32 bg-primary text-primary-foreground relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-gold/5 blur-3xl pointer-events-none" />
+      {/* Animated gradient orbs */}
+      <div
+        className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--gold) / 0.08) 0%, transparent 70%)",
+          transform: `translate(${p.x * 0.5}px, ${p.y * 0.5}px)`,
+          transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+          filter: "blur(40px)",
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, hsl(var(--gold) / 0.06) 0%, transparent 70%)",
+          transform: `translate(${-p.x * 0.8}px, ${-p.y * 0.8}px)`,
+          transition: "transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
+          filter: "blur(40px)",
+        }}
+      />
+
+      {/* Geometric decorations */}
+      <div
+        className="absolute top-20 left-20 w-12 h-12 border border-gold/10 pointer-events-none"
+        style={{
+          transform: `rotate(45deg) translate(${-p.x * 0.4}px, ${-p.y * 0.4}px)`,
+          transition: "transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      />
+      <div
+        className="absolute bottom-20 right-20 w-8 h-8 rounded-full border border-gold/10 pointer-events-none"
+        style={{
+          transform: `translate(${p.x * 0.6}px, ${p.y * 0.6}px)`,
+          transition: "transform 0.9s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -30,7 +58,6 @@ const AboutSection = () => {
             проводим курсы и подбираем идеальные образы, чтобы каждая из вас чувствовала 
             себя уверенно и красиво.
           </p>
-
         </div>
       </div>
     </section>
