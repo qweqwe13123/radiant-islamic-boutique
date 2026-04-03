@@ -3,6 +3,7 @@ import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import product3 from "@/assets/product-3.jpg";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useTilt } from "@/hooks/useTilt";
 
 const products = [
   {
@@ -24,6 +25,57 @@ const products = [
     category: "Аксессуары",
   },
 ];
+
+const ProductCard = ({ product, index }: { product: typeof products[0]; index: number }) => {
+  const { ref, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
+
+  return (
+    <div className={`reveal reveal-delay-${index + 1} group cursor-pointer`}>
+      <div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="relative overflow-hidden bg-background mb-4"
+        style={{ transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)" }}
+      >
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          width={600}
+          height={800}
+          className="w-full h-[400px] md:h-[480px] object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        />
+        {/* Shine sweep */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <button className="w-full py-3.5 bg-primary-foreground text-primary font-body text-xs font-medium tracking-[0.15em] uppercase hover:bg-gold hover:text-gold-foreground transition-colors duration-300">
+            В корзину
+          </button>
+        </div>
+        {/* Quick view */}
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+          <div className="w-10 h-10 glass flex items-center justify-center cursor-pointer hover:bg-gold hover:text-gold-foreground transition-colors">
+            <ArrowUpRight size={16} />
+          </div>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
+          {product.category}
+        </p>
+        <h3 className="font-body text-sm font-medium text-foreground group-hover:text-gold transition-colors duration-300">
+          {product.name}
+        </h3>
+        <p className="font-display text-base font-semibold text-foreground">
+          {product.price}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const ShopSection = () => {
   const ref = useScrollReveal<HTMLElement>();
@@ -57,42 +109,7 @@ const ShopSection = () => {
         {/* Products grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {products.map((product, index) => (
-            <div key={index} className={`reveal reveal-delay-${index + 1} group cursor-pointer magnetic-hover`}>
-              <div className="relative overflow-hidden bg-background mb-4">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  loading="lazy"
-                  width={600}
-                  height={800}
-                  className="w-full h-[400px] md:h-[480px] object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                />
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                  <button className="w-full py-3.5 bg-primary-foreground text-primary font-body text-xs font-medium tracking-[0.15em] uppercase hover:bg-gold hover:text-gold-foreground transition-colors duration-300">
-                    В корзину
-                  </button>
-                </div>
-                {/* Quick view */}
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                  <div className="w-10 h-10 glass flex items-center justify-center cursor-pointer hover:bg-gold hover:text-gold-foreground transition-colors">
-                    <ArrowUpRight size={16} />
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <p className="font-body text-[10px] font-medium tracking-[0.2em] uppercase text-muted-foreground">
-                  {product.category}
-                </p>
-                <h3 className="font-body text-sm font-medium text-foreground group-hover:text-gold transition-colors duration-300">
-                  {product.name}
-                </h3>
-                <p className="font-display text-base font-semibold text-foreground">
-                  {product.price}
-                </p>
-              </div>
-            </div>
+            <ProductCard key={index} product={product} index={index} />
           ))}
         </div>
 
