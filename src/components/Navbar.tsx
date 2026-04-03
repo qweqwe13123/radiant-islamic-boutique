@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 
 const links = [
   { label: "Главная", href: "#" },
@@ -36,7 +36,7 @@ const Navbar = () => {
       scrolled ? "glass-panel shadow-lg" : "bg-transparent"
     }`}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="flex items-center justify-between h-18 md:h-22" style={{ height: scrolled ? 64 : 80 }}>
+        <div className="flex items-center justify-between" style={{ height: scrolled ? 64 : 80 }}>
           {/* Mobile toggle */}
           <button onClick={() => setOpen(!open)} className="md:hidden p-2 text-foreground" aria-label="Menu">
             <div className="relative w-5 h-5">
@@ -66,11 +66,11 @@ const Navbar = () => {
 
           {/* Logo center */}
           <a href="#" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center group">
-            <span className="font-display text-2xl md:text-3xl font-light tracking-[0.3em] uppercase text-foreground group-hover:text-rose transition-colors duration-500">
-              Nūra
+            <span className="font-display text-lg md:text-xl font-light tracking-[0.15em] uppercase text-foreground group-hover:text-rose transition-colors duration-500" style={{ fontWeight: 400 }}>
+              ZARIFA
             </span>
-            <span className="text-[8px] font-body tracking-[0.5em] uppercase text-muted-foreground mt-[-2px]">
-              modest fashion
+            <span className="text-[7px] font-body tracking-[0.4em] uppercase text-muted-foreground mt-[-1px]">
+              collection
             </span>
           </a>
 
@@ -108,7 +108,7 @@ const Navbar = () => {
       {/* Mobile menu */}
       <div className={`md:hidden fixed inset-0 z-40 transition-all duration-500 ${open ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-foreground/20 backdrop-blur-sm transition-opacity duration-500 ${open ? "opacity-100" : "opacity-0"}`} onClick={() => setOpen(false)} />
-        <div className={`absolute top-0 left-0 w-[280px] h-full bg-background shadow-2xl transition-transform duration-500 cubic-bezier(0.16, 1, 0.3, 1) ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`absolute top-0 left-0 w-[280px] h-full bg-background shadow-2xl transition-transform duration-500 ${open ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="p-8 pt-20 space-y-6">
             {links.map((l, i) => (
               <a
@@ -123,7 +123,7 @@ const Navbar = () => {
             ))}
             <hr className="hr-animated my-6" />
             <p className="text-[10px] font-body tracking-[0.3em] uppercase text-muted-foreground">
-              © 2026 NŪRA
+              © 2026 ZARIFA COLLECTION
             </p>
           </div>
         </div>
