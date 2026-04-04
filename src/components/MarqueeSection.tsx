@@ -15,12 +15,12 @@ const MarqueeSection = () => {
       <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-primary to-transparent z-10 pointer-events-none" />
 
       {/* Double marquee for seamless loop */}
-      <div className="flex whitespace-nowrap marquee">
-        {[...items, ...items, ...items].map((item, i) => (
+      <div className="flex whitespace-nowrap animate-marquee">
+        {[...items, ...items, ...items, ...items].map((item, i) => (
           <span
             key={i}
-            className={`font-display text-base md:text-lg font-medium tracking-[0.3em] uppercase mx-4 md:mx-8 ${
-              item === "✦" ? "text-gold animate-spin-slow" : "text-primary-foreground/80"
+            className={`font-display text-base md:text-lg font-medium tracking-[0.3em] uppercase mx-4 md:mx-8 flex-shrink-0 ${
+              item === "✦" ? "text-rose" : "text-primary-foreground/80"
             }`}
           >
             {item}
