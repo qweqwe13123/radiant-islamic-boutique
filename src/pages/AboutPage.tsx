@@ -125,19 +125,60 @@ const AboutPage = () => {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-12 space-y-10">
-        {/* Photo */}
-        <div className="flex justify-center">
-          <div className="rounded-2xl overflow-hidden shadow-lg" style={{ maxWidth: '280px' }}>
-            <img src={stylistPhoto} alt="Зарифа" className="w-full h-auto object-cover" />
+      <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
+        {/* Photo + Video Carousel side by side */}
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 justify-center">
+          {/* Photo side */}
+          <div className="flex flex-col items-center gap-4 flex-shrink-0">
+            <div className="rounded-2xl overflow-hidden shadow-lg" style={{ maxWidth: '280px' }}>
+              <img src={stylistPhoto} alt="Зарифа" className="w-full h-auto object-cover" />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зарифа</h2>
+              <p className="font-body text-sm italic" style={{ color: '#B8865A' }}>
+                <span style={{ color: '#C4956A' }}>━━</span> одену тебя красиво <span style={{ color: '#C4956A' }}>━━</span>
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="text-center space-y-2">
-          <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зарифа</h2>
-          <p className="font-body text-sm italic" style={{ color: '#B8865A' }}>
-            <span style={{ color: '#C4956A' }}>━━</span> одену тебя красиво <span style={{ color: '#C4956A' }}>━━</span>
-          </p>
+          {/* Video Carousel side */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-display text-xl font-bold text-center tracking-wider mb-4" style={{ color: '#5C3D2E' }}>
+              ОБРАЗЫ
+            </h3>
+            <div className="relative">
+              <button
+                onClick={() => scroll("left")}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+                style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+              >
+                <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
+              </button>
+              <div
+                ref={scrollRef}
+                className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-8 snap-x snap-mandatory items-center justify-center"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {videos.map((v, i) => (
+                  <div key={i} className="snap-center">
+                    <VideoCard
+                      src={v.src}
+                      title={v.title}
+                      isSelected={selectedVideo === i}
+                      onSelect={() => handleSelectVideo(i)}
+                    />
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => scroll("right")}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+                style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+              >
+                <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="w-16 h-[3px] mx-auto rounded-full" style={{ background: 'linear-gradient(to right, transparent, #C4956A, transparent)' }} />
