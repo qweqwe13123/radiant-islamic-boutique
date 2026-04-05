@@ -50,12 +50,19 @@ const services = [
 const animationTypes = ["fade-left", "fade-right", "fade-left", "fade-right"] as const;
 
 const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
+  const navigate = useNavigate();
   const { ref: tiltRef, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
   const reveal = useAnimatedReveal({
     type: animationTypes[index] as any,
     delay: 100,
     duration: 900,
   });
+
+  const handleClick = () => {
+    if ((service as any).link) {
+      navigate((service as any).link);
+    }
+  };
 
   return (
     <div
