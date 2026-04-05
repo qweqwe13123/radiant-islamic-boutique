@@ -68,6 +68,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
     <div
       ref={reveal.ref}
       style={reveal.style}
+      onClick={handleClick}
       className="group grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer"
     >
       {/* Image with 3D tilt */}
