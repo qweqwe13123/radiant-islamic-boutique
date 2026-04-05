@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import stylistPhoto from "@/assets/stylist-photo.jpg";
 
-const videos = [
-  { src: "/videos/look-1.mp4", title: "Elegant look" },
-  { src: "/videos/look-2.mp4", title: "Classic style" },
-  { src: "/videos/look-3.mp4", title: "Modern abaya" },
+const carouselItems = [
+  { type: 'photo' as const, src: stylistPhoto, title: "Зарифа" },
+  { type: 'video' as const, src: "/videos/look-1.mp4", title: "Elegant look" },
+  { type: 'video' as const, src: "/videos/look-2.mp4", title: "Classic style" },
+  { type: 'video' as const, src: "/videos/look-3.mp4", title: "Modern abaya" },
 ];
 
-const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: string; isSelected: boolean; onSelect: () => void }) => {
+const CarouselCard = ({ item, isSelected, onSelect }: { item: typeof carouselItems[number]; isSelected: boolean; onSelect: () => void }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
@@ -24,11 +25,7 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current) return;
-    if (playing) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play();
-    }
+    if (playing) { videoRef.current.pause(); } else { videoRef.current.play(); }
     setPlaying(!playing);
   };
 
@@ -46,16 +43,13 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
         zIndex: isSelected ? 10 : 1,
       }}
     >
-      <video
-        ref={videoRef}
-        src={src}
-        muted={muted}
-        loop
-        playsInline
-        className="w-full h-full object-cover"
-      />
+      {item.type === 'photo' ? (
+        <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
+      ) : (
+        <video ref={videoRef} src={item.src} muted={muted} loop playsInline className="w-full h-full object-cover" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-      {isSelected && (
+      {isSelected && item.type === 'video' && (
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
           <button onClick={togglePlay} className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors">
             {playing ? (
@@ -76,7 +70,7 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
       )}
       {isSelected && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-body font-semibold tracking-widest uppercase" style={{ backgroundColor: 'rgba(196, 149, 106, 0.8)', color: '#fff' }}>
-          ▶ Выбрано
+          {item.type === 'photo' ? '📷 Фото' : '▶ Выбрано'}
         </div>
       )}
     </div>
@@ -86,7 +80,7 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
 const AboutPage = () => {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [selectedVideo, setSelectedVideo] = useState(1);
+  const [selectedVideo, setSelectedVideo] = useState(0);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
@@ -126,59 +120,37 @@ const AboutPage = () => {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-10">
-        {/* Photo + Video Carousel side by side */}
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 justify-center">
-          {/* Photo side */}
-          <div className="flex flex-col items-center gap-4 flex-shrink-0">
-            <div className="rounded-2xl overflow-hidden shadow-lg" style={{ maxWidth: '280px' }}>
-              <img src={stylistPhoto} alt="Зарифа" className="w-full h-auto object-cover" />
-            </div>
-            <div className="text-center space-y-2">
-              <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зарифа</h2>
-              <p className="font-body text-sm italic" style={{ color: '#B8865A' }}>
-                <span style={{ color: '#C4956A' }}>━━</span> одену тебя красиво <span style={{ color: '#C4956A' }}>━━</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Video Carousel side */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-display text-xl font-bold text-center tracking-wider mb-4" style={{ color: '#5C3D2E' }}>
-              ОБРАЗЫ
-            </h3>
-            <div className="relative">
-              <button
-                onClick={() => scroll("left")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
-                style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
-              >
-                <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
-              </button>
-              <div
-                ref={scrollRef}
-                className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-8 snap-x snap-mandatory items-center justify-center"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                {videos.map((v, i) => (
-                  <div key={i} className="snap-center">
-                    <VideoCard
-                      src={v.src}
-                      title={v.title}
-                      isSelected={selectedVideo === i}
-                      onSelect={() => handleSelectVideo(i)}
-                    />
-                  </div>
-                ))}
+        {/* Unified Carousel */}
+        <div className="relative">
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+            style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+          >
+            <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
+          </button>
+          <div
+            ref={scrollRef}
+            className="flex gap-4 overflow-x-auto scrollbar-hide py-4 px-8 snap-x snap-mandatory items-center justify-center"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {carouselItems.map((item, i) => (
+              <div key={i} className="snap-center">
+                <CarouselCard
+                  item={item}
+                  isSelected={selectedVideo === i}
+                  onSelect={() => handleSelectVideo(i)}
+                />
               </div>
-              <button
-                onClick={() => scroll("right")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
-                style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
-              >
-                <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
-              </button>
-            </div>
+            ))}
           </div>
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+            style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+          >
+            <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
+          </button>
         </div>
 
         <div className="w-16 h-[3px] mx-auto rounded-full" style={{ background: 'linear-gradient(to right, transparent, #C4956A, transparent)' }} />
