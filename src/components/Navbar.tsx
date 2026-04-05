@@ -117,9 +117,9 @@ const Navbar = () => {
             {links.map((l, i) => (
               <a
                 key={l.label}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="block font-display text-2xl font-light text-foreground hover:text-rose transition-colors"
+                href={(l as any).isRoute ? undefined : l.href}
+                onClick={() => { setOpen(false); if ((l as any).isRoute) navigate(l.href); }}
+                className="block font-display text-2xl font-light text-foreground hover:text-rose transition-colors cursor-pointer"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 {l.label}
