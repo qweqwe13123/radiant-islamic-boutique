@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const links = [
   { label: "Главная", href: "#" },
   { label: "Коллекции", href: "#shop" },
   { label: "Услуги", href: "#services" },
-  { label: "О нас", href: "#about" },
-  { label: "Контакты", href: "#contact" },
+  { label: "О нас", href: "/about", isRoute: true },
+  { label: "Контакты", href: "/contacts", isRoute: true },
 ];
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("#");
@@ -51,8 +53,9 @@ const Navbar = () => {
             {links.slice(0, 3).map((l) => (
               <a
                 key={l.label}
-                href={l.href}
-                className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 ${
+                href={(l as any).isRoute ? undefined : l.href}
+                onClick={(l as any).isRoute ? (e: React.MouseEvent) => { e.preventDefault(); navigate(l.href); } : undefined}
+                className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 cursor-pointer ${
                   activeSection === l.href ? "text-rose" : "text-foreground hover:text-rose"
                 }`}
               >
@@ -80,8 +83,9 @@ const Navbar = () => {
               {links.slice(3).map((l) => (
                 <a
                   key={l.label}
-                  href={l.href}
-                  className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 ${
+                  href={(l as any).isRoute ? undefined : l.href}
+                  onClick={(l as any).isRoute ? (e: React.MouseEvent) => { e.preventDefault(); navigate(l.href); } : undefined}
+                  className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 cursor-pointer ${
                     activeSection === l.href ? "text-rose" : "text-foreground hover:text-rose"
                   }`}
                 >
@@ -113,9 +117,9 @@ const Navbar = () => {
             {links.map((l, i) => (
               <a
                 key={l.label}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="block font-display text-2xl font-light text-foreground hover:text-rose transition-colors"
+                href={(l as any).isRoute ? undefined : l.href}
+                onClick={() => { setOpen(false); if ((l as any).isRoute) navigate(l.href); }}
+                className="block font-display text-2xl font-light text-foreground hover:text-rose transition-colors cursor-pointer"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 {l.label}
