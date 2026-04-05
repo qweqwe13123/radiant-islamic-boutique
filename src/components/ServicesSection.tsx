@@ -31,9 +31,10 @@ const services = [
     subtitle: "Персональная консультация",
     description: "Индивидуальный разбор вашего гардероба с рекомендациями по обновлению.",
     image: serviceWardrobe,
-    price: "7 990 ₽",
+    price: "4 000 — 15 000 ₽",
     tag: "КОНСУЛЬТАЦИЯ",
     num: "03",
+    link: "/wardrobe",
   },
   {
     title: "Подбор хиджаба",
