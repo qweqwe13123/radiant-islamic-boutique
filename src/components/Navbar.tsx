@@ -83,8 +83,9 @@ const Navbar = () => {
               {links.slice(3).map((l) => (
                 <a
                   key={l.label}
-                  href={l.href}
-                  className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 ${
+                  href={(l as any).isRoute ? undefined : l.href}
+                  onClick={(l as any).isRoute ? (e: React.MouseEvent) => { e.preventDefault(); navigate(l.href); } : undefined}
+                  className={`relative text-[11px] font-body font-medium tracking-[0.25em] uppercase transition-colors duration-300 cursor-pointer ${
                     activeSection === l.href ? "text-rose" : "text-foreground hover:text-rose"
                   }`}
                 >
