@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const links = [
   { label: "Главная", href: "#" },
@@ -10,6 +11,7 @@ const links = [
 ];
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("#");
