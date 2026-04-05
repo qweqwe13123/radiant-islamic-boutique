@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import serviceGuide from "@/assets/service-guide.jpg";
 import serviceCourse from "@/assets/service-course.jpg";
 import serviceWardrobe from "@/assets/service-wardrobe.jpg";
@@ -30,9 +31,10 @@ const services = [
     subtitle: "Персональная консультация",
     description: "Индивидуальный разбор вашего гардероба с рекомендациями по обновлению.",
     image: serviceWardrobe,
-    price: "7 990 ₽",
+    price: "4 000 — 15 000 ₽",
     tag: "КОНСУЛЬТАЦИЯ",
     num: "03",
+    link: "/wardrobe",
   },
   {
     title: "Подбор хиджаба",
@@ -48,6 +50,7 @@ const services = [
 const animationTypes = ["fade-left", "fade-right", "fade-left", "fade-right"] as const;
 
 const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
+  const navigate = useNavigate();
   const { ref: tiltRef, handleMouseMove, handleMouseLeave } = useTilt<HTMLDivElement>(10);
   const reveal = useAnimatedReveal({
     type: animationTypes[index] as any,
@@ -55,10 +58,17 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
     duration: 900,
   });
 
+  const handleClick = () => {
+    if ((service as any).link) {
+      navigate((service as any).link);
+    }
+  };
+
   return (
     <div
       ref={reveal.ref}
       style={reveal.style}
+      onClick={handleClick}
       className="group grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center cursor-pointer"
     >
       {/* Image with 3D tilt */}
