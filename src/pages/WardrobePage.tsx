@@ -518,7 +518,7 @@ const WardrobePage = () => {
                     src={v.src}
                     title={v.title}
                     isSelected={selectedVideo === i}
-                    onSelect={() => setSelectedVideo(i)}
+                    onSelect={() => handleSelectVideo(i)}
                   />
                 </div>
               ))}
