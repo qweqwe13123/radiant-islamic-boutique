@@ -1,14 +1,117 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Play, VolumeX, Volume2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import stylistPhoto from "@/assets/stylist-photo.jpg";
+
+const videos = [
+  { src: "/videos/look-1.mp4", title: "Elegant look" },
+  { src: "/videos/look-2.mp4", title: "Classic style" },
+  { src: "/videos/look-3.mp4", title: "Modern abaya" },
+];
+
+const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: string; isSelected: boolean; onSelect: () => void }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    if (!isSelected && videoRef.current && playing) {
+      videoRef.current.pause();
+      setPlaying(false);
+    }
+  }, [isSelected]);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    if (playing) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setPlaying(!playing);
+  };
+
+  return (
+    <div
+      onClick={onSelect}
+      className="relative flex-shrink-0 rounded-2xl overflow-hidden shadow-lg cursor-pointer"
+      style={{
+        width: isSelected ? '300px' : '220px',
+        aspectRatio: '9/16',
+        transition: 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+        transform: isSelected ? 'scale(1)' : 'scale(0.92)',
+        opacity: isSelected ? 1 : 0.6,
+        filter: isSelected ? 'none' : 'brightness(0.7)',
+        zIndex: isSelected ? 10 : 1,
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={src}
+        muted={muted}
+        loop
+        playsInline
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      {isSelected && (
+        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+          <button onClick={togglePlay} className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors">
+            {playing ? (
+              <div className="w-5 h-5 flex items-center justify-center">
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-4 bg-white rounded-sm" />
+                  <div className="w-1.5 h-4 bg-white rounded-sm" />
+                </div>
+              </div>
+            ) : (
+              <Play size={20} className="text-white ml-0.5" fill="white" />
+            )}
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }} className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors">
+            {muted ? <VolumeX size={20} className="text-white" /> : <Volume2 size={20} className="text-white" />}
+          </button>
+        </div>
+      )}
+      {isSelected && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-body font-semibold tracking-widest uppercase" style={{ backgroundColor: 'rgba(196, 149, 106, 0.8)', color: '#fff' }}>
+          ▶ Выбрано
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AboutPage = () => {
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [selectedVideo, setSelectedVideo] = useState(1);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
+
+  const handleSelectVideo = (index: number) => {
+    setSelectedVideo(index);
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      const cards = container.children;
+      if (cards[index]) {
+        const card = cards[index] as HTMLElement;
+        const containerWidth = container.offsetWidth;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const scrollLeft = cardCenter - containerWidth / 2;
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      }
+    }
+  };
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = 320;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FDDCB5' }}>
@@ -73,6 +176,45 @@ const AboutPage = () => {
           <p className="text-center italic" style={{ color: '#B8865A' }}>
             Я вижу, какой стиль подчеркнет вашу красоту и сделает вас уверенной ещё до детального разбора.
           </p>
+        </div>
+
+        {/* Video Carousel */}
+        <div className="space-y-4 pt-4">
+          <h3 className="font-display text-xl font-bold text-center tracking-wider" style={{ color: '#5C3D2E' }}>
+            ОБРАЗЫ
+          </h3>
+          <div className="relative">
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+            >
+              <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
+            </button>
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-8 snap-x snap-mandatory items-center justify-center"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {videos.map((v, i) => (
+                <div key={i} className="snap-center">
+                  <VideoCard
+                    src={v.src}
+                    title={v.title}
+                    isSelected={selectedVideo === i}
+                    onSelect={() => handleSelectVideo(i)}
+                  />
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+            >
+              <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
+            </button>
+          </div>
         </div>
 
         <div className="text-center pt-8">

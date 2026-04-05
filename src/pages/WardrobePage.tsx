@@ -14,6 +14,14 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
 
+  // Pause video when deselected
+  useEffect(() => {
+    if (!isSelected && videoRef.current && playing) {
+      videoRef.current.pause();
+      setPlaying(false);
+    }
+  }, [isSelected]);
+
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current) return;
@@ -82,7 +90,9 @@ const WardrobePage = () => {
   const [selectedVideo, setSelectedVideo] = useState(1);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, []);
 
   const handleSelectVideo = (index: number) => {

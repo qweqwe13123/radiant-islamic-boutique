@@ -1,6 +1,8 @@
 import { Instagram } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <footer className="bg-primary text-primary-foreground relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
@@ -32,7 +34,14 @@ const Footer = () => {
               <ul className="space-y-2">
                 {col.items.map((item) => (
                   <li key={item}>
-                    <a href="#" className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-all duration-300 inline-block hover:translate-x-1">
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        if (item === "Контакты") { e.preventDefault(); navigate("/contacts"); }
+                        else if (item === "Разбор гардероба") { e.preventDefault(); navigate("/wardrobe"); }
+                      }}
+                      className="font-body text-sm text-primary-foreground/70 hover:text-gold transition-all duration-300 inline-block hover:translate-x-1"
+                    >
                       {item}
                     </a>
                   </li>
