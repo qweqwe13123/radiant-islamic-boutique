@@ -5,8 +5,8 @@ const links = [
   { label: "Главная", href: "#" },
   { label: "Коллекции", href: "#shop" },
   { label: "Услуги", href: "#services" },
-  { label: "О нас", href: "#about" },
-  { label: "Контакты", href: "#contact" },
+  { label: "О нас", href: "/about", isRoute: true },
+  { label: "Контакты", href: "/contacts", isRoute: true },
 ];
 
 const Navbar = () => {
