@@ -1,6 +1,6 @@
 import { ArrowLeft, Play, VolumeX, Volume2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import stylistPhoto from "@/assets/stylist-photo.jpg";
 
 const videos = [
@@ -79,7 +79,26 @@ const VideoCard = ({ src, title, isSelected, onSelect }: { src: string; title: s
 const WardrobePage = () => {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [selectedVideo, setSelectedVideo] = useState(0);
+  const [selectedVideo, setSelectedVideo] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleSelectVideo = (index: number) => {
+    setSelectedVideo(index);
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      const cards = container.children;
+      if (cards[index]) {
+        const card = cards[index] as HTMLElement;
+        const containerWidth = container.offsetWidth;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const scrollLeft = cardCenter - containerWidth / 2;
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      }
+    }
+  };
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -111,8 +130,31 @@ const WardrobePage = () => {
             </div>
           </div>
           <div className="mt-6">
-            <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зарифа</h2>
+           <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зарифа</h2>
             <p className="font-body text-lg mt-2" style={{ color: '#A0714E' }}>персональный стилист</p>
+          </div>
+
+          <div className="font-body text-sm leading-relaxed space-y-4 text-left px-2" style={{ color: '#7A5C45' }}>
+            <p className="text-center italic" style={{ color: '#B8865A' }}>
+              Экспертный разбор стиля с опытом в бьюти-сфере
+            </p>
+            <p>Мой подход основан не только на теории, но и на многолетнем опыте работы с внешностью женщин.</p>
+            <p className="font-display font-bold" style={{ color: '#5C3D2E' }}>Я работала:</p>
+            <ul className="space-y-1 pl-2">
+              <li>— парикмахером</li>
+              <li>— мастером маникюра</li>
+              <li>— специалистом по наращиванию ресниц</li>
+              <li>— в сфере ухода и красоты</li>
+            </ul>
+            <p className="font-display font-bold" style={{ color: '#5C3D2E' }}>Благодаря этому я умею с первого взгляда определить, что подходит именно вам:</p>
+            <ul className="space-y-1 pl-2">
+              <li>— по форме лица</li>
+              <li>— по типу фигуры</li>
+              <li>— по общему образу и энергетике</li>
+            </ul>
+            <p className="text-center italic" style={{ color: '#B8865A' }}>
+              Я вижу, какой стиль подчеркнет вашу красоту и сделает вас уверенной ещё до детального разбора.
+            </p>
           </div>
           <p className="font-body text-sm italic" style={{ color: '#B8865A' }}>
             <span style={{ color: '#C4956A' }}>━━</span> одену тебя красиво <span style={{ color: '#C4956A' }}>━━</span>
