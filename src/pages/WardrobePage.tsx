@@ -8,9 +8,9 @@ const WardrobePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen" style={{ backgroundColor: '#FDDCB5' }}>
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-cream/90 backdrop-blur-md border-b border-gold/10">
+      <div className="sticky top-0 z-50 backdrop-blur-md border-b border-gold/10" style={{ backgroundColor: 'rgba(253, 220, 181, 0.9)' }}>
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
           <button
             onClick={() => navigate("/")}
@@ -24,15 +24,17 @@ const WardrobePage = () => {
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-12">
         {/* Stylist intro */}
-        <div className="text-center space-y-4">
-          <img
-            src={stylistPhoto}
-            alt="Диана Зафирова"
-            className="w-64 h-80 object-cover mx-auto"
-          />
-          <div>
+        <div className="text-center space-y-6">
+          <div className="rounded-2xl overflow-hidden shadow-lg mx-auto" style={{ maxWidth: '320px' }}>
+            <img
+              src={stylistPhoto}
+              alt="Диана Зафирова"
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          <div className="mt-6">
             <h2 className="font-display text-3xl font-bold text-foreground">Диана Зафирова</h2>
-            <p className="font-body text-lg text-muted-foreground mt-1">персональный стилист</p>
+            <p className="font-body text-lg text-muted-foreground mt-2">персональный стилист</p>
           </div>
           <p className="font-body text-sm text-muted-foreground italic">| одену тебя красиво |</p>
           <div className="w-px h-12 bg-gold/30 mx-auto" />
