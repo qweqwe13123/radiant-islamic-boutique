@@ -219,44 +219,6 @@ const AboutPage = () => {
           </p>
         </div>
 
-        {/* Video Carousel */}
-        <div className="space-y-4 pt-4">
-          <h3 className="font-display text-xl font-bold text-center tracking-wider" style={{ color: '#5C3D2E' }}>
-            ОБРАЗЫ
-          </h3>
-          <div className="relative">
-            <button
-              onClick={() => scroll("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
-              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
-            >
-              <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
-            </button>
-            <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-8 snap-x snap-mandatory items-center justify-center"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {videos.map((v, i) => (
-                <div key={i} className="snap-center">
-                  <VideoCard
-                    src={v.src}
-                    title={v.title}
-                    isSelected={selectedVideo === i}
-                    onSelect={() => handleSelectVideo(i)}
-                  />
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => scroll("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
-              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
-            >
-              <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
-            </button>
-          </div>
-        </div>
 
         <div className="text-center pt-8">
           <p className="font-body text-xs tracking-widest uppercase" style={{ color: '#A0714E' }}>
