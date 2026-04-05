@@ -1,58 +1,117 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Play, VolumeX, Volume2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 import stylistPhoto from "@/assets/stylist-photo.jpg";
-import styleLook1 from "@/assets/style-look-1.jpg";
-import styleLook2 from "@/assets/style-look-2.jpg";
+
+const videos = [
+  { src: "/videos/look-1.mp4", title: "Elegant look" },
+  { src: "/videos/look-2.mp4", title: "Classic style" },
+  { src: "/videos/look-3.mp4", title: "Modern abaya" },
+];
+
+const VideoCard = ({ src, title }: { src: string; title: string }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (playing) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setPlaying(!playing);
+  };
+
+  return (
+    <div className="relative flex-shrink-0 w-[260px] sm:w-[300px] rounded-2xl overflow-hidden shadow-lg" style={{ aspectRatio: '9/16' }}>
+      <video
+        ref={videoRef}
+        src={src}
+        muted={muted}
+        loop
+        playsInline
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+        <button onClick={togglePlay} className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors">
+          {playing ? (
+            <div className="w-5 h-5 flex items-center justify-center">
+              <div className="flex gap-1">
+                <div className="w-1.5 h-4 bg-white rounded-sm" />
+                <div className="w-1.5 h-4 bg-white rounded-sm" />
+              </div>
+            </div>
+          ) : (
+            <Play size={20} className="text-white ml-0.5" fill="white" />
+          )}
+        </button>
+        <button onClick={() => setMuted(!muted)} className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors">
+          {muted ? <VolumeX size={20} className="text-white" /> : <Volume2 size={20} className="text-white" />}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const WardrobePage = () => {
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = 320;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FDDCB5' }}>
       {/* Header */}
-      <div className="sticky top-0 z-50 backdrop-blur-md border-b border-gold/10" style={{ backgroundColor: 'rgba(253, 220, 181, 0.9)' }}>
+      <div className="sticky top-0 z-50 backdrop-blur-md border-b" style={{ backgroundColor: 'rgba(253, 220, 181, 0.9)', borderColor: 'rgba(180, 130, 80, 0.15)' }}>
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <button
-            onClick={() => navigate("/")}
-            className="p-2 hover:bg-gold/10 rounded-full transition-colors"
-          >
-            <ArrowLeft size={20} className="text-foreground" />
+          <button onClick={() => navigate("/")} className="p-2 rounded-full transition-colors" style={{ color: '#5C3D2E' }}>
+            <ArrowLeft size={20} />
           </button>
-          <h1 className="font-display text-lg font-semibold text-foreground">ZARIFA COLLECTION</h1>
+          <h1 className="font-display text-lg font-semibold" style={{ color: '#5C3D2E' }}>ZARIFA COLLECTION</h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-12">
         {/* Stylist intro */}
         <div className="text-center space-y-6">
-          <div className="rounded-2xl overflow-hidden shadow-lg mx-auto" style={{ maxWidth: '320px' }}>
-            <img
-              src={stylistPhoto}
-              alt="Диана Зафирова"
-              className="w-full h-auto object-cover"
-            />
+          <div className="flex items-stretch justify-center gap-6">
+            <div className="rounded-2xl overflow-hidden shadow-lg" style={{ maxWidth: '260px' }}>
+              <img src={stylistPhoto} alt="Зафира" className="w-full h-auto object-cover" />
+            </div>
+            {/* Decorative vertical line */}
+            <div className="flex items-center">
+              <div className="w-[3px] h-full rounded-full" style={{ background: 'linear-gradient(to bottom, transparent, #C4956A, #A0714E, #C4956A, transparent)' }} />
+            </div>
           </div>
           <div className="mt-6">
-            <h2 className="font-display text-3xl font-bold text-foreground">Диана Зафирова</h2>
-            <p className="font-body text-lg text-muted-foreground mt-2">персональный стилист</p>
+            <h2 className="font-display text-3xl font-bold" style={{ color: '#5C3D2E' }}>Зафира</h2>
+            <p className="font-body text-lg mt-2" style={{ color: '#A0714E' }}>персональный стилист</p>
           </div>
-          <p className="font-body text-sm text-muted-foreground italic">| одену тебя красиво |</p>
-          <div className="w-px h-12 bg-gold/30 mx-auto" />
+          <p className="font-body text-sm italic" style={{ color: '#B8865A' }}>
+            <span style={{ color: '#C4956A' }}>━━</span> одену тебя красиво <span style={{ color: '#C4956A' }}>━━</span>
+          </p>
+          <div className="w-[3px] h-12 mx-auto rounded-full" style={{ background: 'linear-gradient(to bottom, #C4956A, transparent)' }} />
         </div>
 
         {/* Разбор гардероба онлайн */}
         <div className="space-y-6">
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-6 py-3">
-              <h3 className="font-display text-xl font-bold text-foreground tracking-wider uppercase">
+            <div className="inline-block border-2 px-6 py-3" style={{ borderColor: '#5C3D2E' }}>
+              <h3 className="font-display text-xl font-bold tracking-wider uppercase" style={{ color: '#5C3D2E' }}>
                 Разбор гардероба
               </h3>
             </div>
           </div>
 
-          <div className="space-y-4 font-body text-sm text-muted-foreground leading-relaxed">
-            <h4 className="font-display text-lg font-bold text-foreground text-center">В РАЗБОР ВХОДИТ:</h4>
-            
+          <div className="space-y-4 font-body text-sm leading-relaxed" style={{ color: '#7A5C45' }}>
+            <h4 className="font-display text-lg font-bold text-center" style={{ color: '#5C3D2E' }}>В РАЗБОР ВХОДИТ:</h4>
             <ul className="space-y-3">
               <li>• одежда – 50 предметов</li>
               <li>• обувь по сезону, сумки, ремни, головные уборы – до 20 предметов; украшения в разбор не входят</li>
@@ -60,40 +119,40 @@ const WardrobePage = () => {
             </ul>
           </div>
 
-          <div className="bg-gold/5 border-t-2 border-gold/20 p-6 space-y-3 text-center">
-            <p className="font-body text-sm text-gold font-medium italic">
+          <div className="p-6 space-y-3 text-center rounded-xl" style={{ backgroundColor: 'rgba(196, 149, 106, 0.1)', borderTop: '2px solid rgba(196, 149, 106, 0.3)' }}>
+            <p className="font-body text-sm font-medium italic" style={{ color: '#B8865A' }}>
               Включает поддержку в чате со мной по стилистическим вопросам в течение 14 дней
             </p>
-            <p className="font-display text-sm font-bold text-foreground uppercase tracking-wider">
+            <p className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: '#5C3D2E' }}>
               СРОК ВЫПОЛНЕНИЯ 5 ДНЕЙ
             </p>
-            <p className="font-body text-xs text-muted-foreground">
+            <p className="font-body text-xs" style={{ color: '#A0714E' }}>
               Вся информация оформляется в презентацию и предоставляется на 6й день в течение дня.
             </p>
           </div>
 
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-8 py-4">
-              <span className="font-display text-2xl font-bold text-foreground">16 900 руб.</span>
+            <div className="inline-block border-2 px-8 py-4" style={{ borderColor: '#5C3D2E' }}>
+              <span className="font-display text-2xl font-bold" style={{ color: '#5C3D2E' }}>16 900 руб.</span>
             </div>
           </div>
 
-          <p className="font-body text-xs text-muted-foreground text-center italic">
+          <p className="font-body text-xs text-center italic" style={{ color: '#A0714E' }}>
             *Ссылки из шопинг-листа не предоставляются. Всю одежду вы можете купить самостоятельно, имея мои подсказки в презентации, или обратиться за последующим онлайн – шопингом
           </p>
 
-          <div className="bg-background p-6 space-y-2">
-            <h4 className="font-display text-lg font-bold text-foreground">Как подготовиться к разбору гардероба:</h4>
-            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+          <div className="p-6 space-y-2 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+            <h4 className="font-display text-lg font-bold" style={{ color: '#5C3D2E' }}>Как подготовиться к разбору гардероба:</h4>
+            <p className="font-body text-sm leading-relaxed" style={{ color: '#7A5C45' }}>
               фотографировать одежду и предметы гардероба желательно на однотонном фоне; стараться не держать обувь / сумки в руке при фотографировании, а фотографировать их самостоятельно.
             </p>
           </div>
 
-          <a
-            href="https://t.me/senorita_chilli"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 w-full bg-[#7B5B3A] hover:bg-[#6a4e32] text-white py-4 px-6 rounded-xl transition-colors"
+          <a href="https://t.me/senorita_chilli" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full text-white py-4 px-6 rounded-xl transition-colors"
+            style={{ backgroundColor: '#7B5B3A' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#6a4e32')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#7B5B3A')}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 flex-shrink-0">
               <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
@@ -104,32 +163,32 @@ const WardrobePage = () => {
 
         {/* Divider */}
         <div className="flex justify-center">
-          <div className="w-1/2 h-px bg-gold/20" />
+          <div className="w-1/2 h-px" style={{ backgroundColor: 'rgba(196, 149, 106, 0.3)' }} />
         </div>
 
         {/* Разбор с выездом */}
         <div className="space-y-6">
           <div className="text-center space-y-2">
-            <div className="inline-block border-2 border-foreground px-6 py-3">
-              <h3 className="font-display text-xl font-bold text-foreground tracking-wider uppercase">
+            <div className="inline-block border-2 px-6 py-3" style={{ borderColor: '#5C3D2E' }}>
+              <h3 className="font-display text-xl font-bold tracking-wider uppercase" style={{ color: '#5C3D2E' }}>
                 РАЗБОР ГАРДЕРОБА
               </h3>
             </div>
-            <p className="font-body text-base text-muted-foreground">с выездом на дом</p>
-            <div className="w-px h-10 bg-gold/30 mx-auto" />
+            <p className="font-body text-base" style={{ color: '#A0714E' }}>с выездом на дом</p>
+            <div className="w-[3px] h-10 mx-auto rounded-full" style={{ background: 'linear-gradient(to bottom, #C4956A, transparent)' }} />
           </div>
 
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-8 py-4">
-              <span className="font-display text-2xl font-bold text-foreground">18 900 руб.</span>
+            <div className="inline-block border-2 px-8 py-4" style={{ borderColor: '#5C3D2E' }}>
+              <span className="font-display text-2xl font-bold" style={{ color: '#5C3D2E' }}>18 900 руб.</span>
             </div>
           </div>
 
-          <a
-            href="https://t.me/senorita_chilli"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 w-full bg-[#7B5B3A] hover:bg-[#6a4e32] text-white py-4 px-6 rounded-xl transition-colors"
+          <a href="https://t.me/senorita_chilli" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full text-white py-4 px-6 rounded-xl transition-colors"
+            style={{ backgroundColor: '#7B5B3A' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#6a4e32')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#7B5B3A')}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 flex-shrink-0">
               <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
@@ -140,56 +199,56 @@ const WardrobePage = () => {
 
         {/* Divider */}
         <div className="flex justify-center">
-          <div className="w-1/2 h-px bg-gold/20" />
+          <div className="w-1/2 h-px" style={{ backgroundColor: 'rgba(196, 149, 106, 0.3)' }} />
         </div>
 
         {/* Онлайн капсула */}
         <div className="space-y-6">
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-6 py-3">
-              <h3 className="font-display text-xl font-bold text-foreground tracking-wider uppercase">
+            <div className="inline-block border-2 px-6 py-3" style={{ borderColor: '#5C3D2E' }}>
+              <h3 className="font-display text-xl font-bold tracking-wider uppercase" style={{ color: '#5C3D2E' }}>
                 ОНЛАЙН КАПСУЛА
               </h3>
             </div>
           </div>
 
-          <div className="space-y-3 font-body text-sm text-muted-foreground leading-relaxed">
+          <div className="space-y-3 font-body text-sm leading-relaxed" style={{ color: '#7A5C45' }}>
             <p>• Подбор 10-15 предметов гардероба сочетаемых друг с другом, включая аксессуарную группу: обувь, сумки, ремни по необходимости, очки по индивидуальному запросу; аксессуары в подбор не входят</p>
             <p>В соответствии с вашей фигурой, внешностью и образом жизни</p>
             <p>• Составление комплектов. Количество готовых комплектов не менее 20</p>
             <p>• Предоставляются все ссылки по позициям и по аксессуарной группе</p>
           </div>
 
-          <div className="bg-gold/5 border-t-2 border-gold/20 p-6 space-y-3 text-center">
-            <div className="w-px h-8 bg-gold/30 mx-auto mb-3" />
-            <h4 className="font-display text-base font-bold text-foreground uppercase tracking-wider">
+          <div className="p-6 space-y-3 text-center rounded-xl" style={{ backgroundColor: 'rgba(196, 149, 106, 0.1)', borderTop: '2px solid rgba(196, 149, 106, 0.3)' }}>
+            <div className="w-[3px] h-8 mx-auto mb-3 rounded-full" style={{ background: 'linear-gradient(to bottom, #C4956A, transparent)' }} />
+            <h4 className="font-display text-base font-bold uppercase tracking-wider" style={{ color: '#5C3D2E' }}>
               ТАКЖЕ В УСЛУГУ ВХОДИТ:
             </h4>
-            <p className="font-body text-sm text-gold font-medium italic">
+            <p className="font-body text-sm font-medium italic" style={{ color: '#B8865A' }}>
               Поддержка в чате со мной по стилистическим вопросам в течение 14 дней
             </p>
-            <p className="font-display text-sm font-bold text-foreground uppercase tracking-wider">
+            <p className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: '#5C3D2E' }}>
               СРОК ВЫПОЛНЕНИЯ 5 ДНЕЙ
             </p>
-            <p className="font-body text-xs text-muted-foreground">
+            <p className="font-body text-xs" style={{ color: '#A0714E' }}>
               Вся информация оформляется в презентацию и предоставляется на 6 день в течении дня.
             </p>
-            <p className="font-body text-xs text-muted-foreground italic">
+            <p className="font-body text-xs italic" style={{ color: '#A0714E' }}>
               *возможна корректировка до 3х позиций из капсулы
             </p>
           </div>
 
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-8 py-4">
-              <span className="font-display text-2xl font-bold text-foreground">16 900 руб.</span>
+            <div className="inline-block border-2 px-8 py-4" style={{ borderColor: '#5C3D2E' }}>
+              <span className="font-display text-2xl font-bold" style={{ color: '#5C3D2E' }}>16 900 руб.</span>
             </div>
           </div>
 
-          <a
-            href="https://t.me/senorita_chilli"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 w-full bg-[#7B5B3A] hover:bg-[#6a4e32] text-white py-4 px-6 rounded-xl transition-colors"
+          <a href="https://t.me/senorita_chilli" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full text-white py-4 px-6 rounded-xl transition-colors"
+            style={{ backgroundColor: '#7B5B3A' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#6a4e32')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#7B5B3A')}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 flex-shrink-0">
               <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
@@ -200,45 +259,45 @@ const WardrobePage = () => {
 
         {/* Divider */}
         <div className="flex justify-center">
-          <div className="w-1/2 h-px bg-gold/20" />
+          <div className="w-1/2 h-px" style={{ backgroundColor: 'rgba(196, 149, 106, 0.3)' }} />
         </div>
 
         {/* Комплекс */}
         <div className="space-y-6">
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-6 py-3">
-              <h3 className="font-display text-xl font-bold text-foreground tracking-wider uppercase">
+            <div className="inline-block border-2 px-6 py-3" style={{ borderColor: '#5C3D2E' }}>
+              <h3 className="font-display text-xl font-bold tracking-wider uppercase" style={{ color: '#5C3D2E' }}>
                 КОМПЛЕКС:
               </h3>
             </div>
-            <div className="inline-block border-2 border-foreground px-6 py-3 mt-3">
-              <p className="font-display text-base font-bold text-foreground">
+            <div className="inline-block border-2 px-6 py-3 mt-3" style={{ borderColor: '#5C3D2E' }}>
+              <p className="font-display text-base font-bold" style={{ color: '#5C3D2E' }}>
                 разбор гардероба и капсула онлайн
               </p>
             </div>
           </div>
 
-          <div className="font-body text-sm text-muted-foreground leading-relaxed text-center space-y-3">
+          <div className="font-body text-sm leading-relaxed text-center space-y-3" style={{ color: '#7A5C45' }}>
             <p>Обе услуги объединены в презентацию. Разбирается гардероб в рамках услуги «разбор гардероба», и подбираются позиции, необходимые в гардероб, с предоставлением всех ссылок.</p>
-            <p className="font-display text-sm font-bold text-foreground uppercase tracking-wider">
+            <p className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: '#5C3D2E' }}>
               СРОК ВЫПОЛНЕНИЯ 7 ДНЕЙ
             </p>
-            <p className="font-body text-xs text-muted-foreground">
+            <p className="font-body text-xs" style={{ color: '#A0714E' }}>
               Вся информация оформляется в презентацию и предоставляется на 8 день в течении дня.
             </p>
           </div>
 
           <div className="text-center">
-            <div className="inline-block border-2 border-foreground px-8 py-4">
-              <span className="font-display text-2xl font-bold text-foreground">24 900 руб.</span>
+            <div className="inline-block border-2 px-8 py-4" style={{ borderColor: '#5C3D2E' }}>
+              <span className="font-display text-2xl font-bold" style={{ color: '#5C3D2E' }}>24 900 руб.</span>
             </div>
           </div>
 
-          <a
-            href="https://t.me/senorita_chilli"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 w-full bg-[#7B5B3A] hover:bg-[#6a4e32] text-white py-4 px-6 rounded-xl transition-colors"
+          <a href="https://t.me/senorita_chilli" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full text-white py-4 px-6 rounded-xl transition-colors"
+            style={{ backgroundColor: '#7B5B3A' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#6a4e32')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#7B5B3A')}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 flex-shrink-0">
               <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
@@ -247,19 +306,48 @@ const WardrobePage = () => {
           </a>
         </div>
 
-        {/* Gallery */}
+        {/* Divider */}
         <div className="flex justify-center">
-          <div className="w-1/2 h-px bg-gold/20" />
+          <div className="w-1/2 h-px" style={{ backgroundColor: 'rgba(196, 149, 106, 0.3)' }} />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <img src={styleLook1} alt="Образ 1" className="w-full h-64 object-cover" />
-          <img src={styleLook2} alt="Образ 2" className="w-full h-64 object-cover" />
+        {/* Video Carousel */}
+        <div className="space-y-4">
+          <h3 className="font-display text-xl font-bold text-center tracking-wider" style={{ color: '#5C3D2E' }}>
+            ОБРАЗЫ
+          </h3>
+          <div className="relative">
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+            >
+              <ChevronLeft size={20} style={{ color: '#5C3D2E' }} />
+            </button>
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-8 snap-x snap-mandatory"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {videos.map((v, i) => (
+                <div key={i} className="snap-center">
+                  <VideoCard src={v.src} title={v.title} />
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-lg backdrop-blur-sm transition-colors"
+              style={{ backgroundColor: 'rgba(255,255,255,0.7)' }}
+            >
+              <ChevronRight size={20} style={{ color: '#5C3D2E' }} />
+            </button>
+          </div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom */}
         <div className="text-center pb-8">
-          <p className="font-body text-xs text-muted-foreground tracking-widest uppercase mb-4">
+          <p className="font-body text-xs tracking-widest uppercase mb-4" style={{ color: '#A0714E' }}>
             © 2026 ZARIFA COLLECTION
           </p>
         </div>
