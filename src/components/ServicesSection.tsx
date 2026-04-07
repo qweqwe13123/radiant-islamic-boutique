@@ -1,7 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import serviceGuide from "@/assets/service-guide.jpg";
-import serviceCourse from "@/assets/service-course.jpg";
 import serviceWardrobe from "@/assets/service-wardrobe.jpg";
 import serviceHijab from "@/assets/service-hijab.jpg";
 import { useAnimatedReveal } from "@/hooks/useAnimatedReveal";
@@ -9,31 +7,13 @@ import { useTilt } from "@/hooks/useTilt";
 
 const services = [
   {
-    title: "Стайл-гайд",
-    subtitle: "Руководство по стилю",
-    description: "Полное пошаговое руководство по созданию стильного и скромного гардероба.",
-    image: serviceGuide,
-    price: "2 990 ₽",
-    tag: "PDF ГАЙД",
-    num: "01",
-  },
-  {
-    title: "Онлайн-курс",
-    subtitle: "Искусство скромной моды",
-    description: "Углублённый курс по построению гардероба и подбору образов на все случаи жизни.",
-    image: serviceCourse,
-    price: "12 990 ₽",
-    tag: "ВИДЕО КУРС",
-    num: "02",
-  },
-  {
     title: "Разбор гардероба",
     subtitle: "Персональная консультация",
     description: "Индивидуальный разбор вашего гардероба с рекомендациями по обновлению.",
     image: serviceWardrobe,
     price: "4 000 — 15 000 ₽",
     tag: "КОНСУЛЬТАЦИЯ",
-    num: "03",
+    num: "01",
     link: "/wardrobe",
   },
   {
@@ -43,11 +23,11 @@ const services = [
     image: serviceHijab,
     price: "4 990 ₽",
     tag: "ПОДБОР",
-    num: "04",
+    num: "02",
   },
 ];
 
-const animationTypes = ["fade-left", "fade-right", "fade-left", "fade-right"] as const;
+const animationTypes = ["fade-left", "fade-right"] as const;
 
 const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
   const navigate = useNavigate();
