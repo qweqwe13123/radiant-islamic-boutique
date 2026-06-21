@@ -77,15 +77,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Radiant Islamic Boutique" },
-      { name: "description", content: "Radiant Islamic Boutique - Modern Islamic Fashion & Styling" },
-      { name: "author", content: "Radiant Islamic Boutique" },
-      { property: "og:title", content: "Radiant Islamic Boutique" },
-      { property: "og:description", content: "Modern Islamic Fashion & Styling" },
+      { title: "ZARIFA COLLECTION — стилист для покрытых мусульманок" },
+      {
+        name: "description",
+        content: "Персональный стилист для покрытых мусульманок. Шоппинг-туры в Стамбул, разбор гардероба, готовые капсулы и образы — скромно, изысканно и современно.",
+      },
+      { name: "author", content: "ZARIFA COLLECTION" },
+      { property: "og:title", content: "ZARIFA COLLECTION — стилист для покрытых мусульманок" },
+      {
+        property: "og:description",
+        content: "Персональный стилист для покрытых мусульманок. Шоппинг-туры в Стамбул, разбор гардероба, готовые капсулы и образы.",
+      },
+      { property: "og:image", content: "/og-image.jpg" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [
+      {
+        rel: "icon",
+        type: "image/png",
+        href: "/favicon.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/apple-touch-icon.png",
+      },
       {
         rel: "stylesheet",
         href: appCss,
